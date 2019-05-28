@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/src/**",
+                "/Users/feral/.conan/data/glfw/3.3/bincrafters/stable/package/534dcc368c999e07e81f146b3466b8f656ef1f55/include",
+                "/Users/feral/.conan/data/glm/0.9.9.4/g-truc/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include",
+                "/usr/local/Cellar/glew/2.1.0/include"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "intelliSenseMode": "clang-x64",
+            "cppStandard": "c++14",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+        }
+    ],
+    "version": 4
+}

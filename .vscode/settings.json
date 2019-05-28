@@ -1,0 +1,10 @@
+{
+    "cmake.configureOnOpen": true,
+    "files.associations": {
+        "Makefile.*": "makefile",
+        "*.shader": "glsl",
+        "iosfwd": "cpp",
+        "__config": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Enabled"
+}
