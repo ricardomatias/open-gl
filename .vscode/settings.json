@@ -4,7 +4,8 @@
         "Makefile.*": "makefile",
         "*.shader": "glsl",
         "iosfwd": "cpp",
-        "__config": "cpp"
+        "__config": "cpp",
+        "istream": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

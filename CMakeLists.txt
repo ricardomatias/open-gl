@@ -14,8 +14,9 @@ LINK_DIRECTORIES(/usr/local/lib)
 file(GLOB source_files
   "src/*.h"
   "src/*.cpp"
+  "src/vendor/**/*.h"
+  "src/vendor/**/*.cpp"
 )
-
 
 add_executable(opg src/main.cpp ${source_files})
 set_target_properties (opg PROPERTIES

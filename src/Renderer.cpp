@@ -2,19 +2,24 @@
 
 #include <iostream>
 
-void GLClearError()
+Renderer::Renderer(/* args */)
 {
-    while (glGetError() != GL_NO_ERROR);
 }
 
-bool GLLogCall(const char *function, const char *file, int line)
+Renderer::~Renderer()
 {
-    while (GLenum error = glGetError())
-    {
-        std::cerr << "[OpenGL Error]: 0x" << std::hex << error << std::dec << " \n"
-                  << function << " " << file << ":" << line << std::endl;
-        return false;
-    }
+}
 
-    return true;
+void Renderer::Clear() const
+{
+    GLCall(glClear(GL_COLOR_BUFFER_BIT));
+}
+
+void Renderer::Draw(const VertexArray & va, const IndexBuffer & ib, const Shader & shader) const
+{
+    shader.Bind();
+    va.Bind();
+    ib.Bind();
+
+    GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
 }

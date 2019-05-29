@@ -1,20 +1,19 @@
 #pragma once
 #define DEBUG
 
-#include <GL/glew.h>
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
 
-#define ASSERT(x) \
-    if (!(x))     \
-    __builtin_debugtrap()
+class Renderer
+{
+private:
+    /* data */
+public:
+    Renderer(/* args */);
+    ~Renderer();
 
-#ifdef DEBUG
-#define GLCall(x)   \
-    GLClearError(); \
-    x;              \
-    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-#else
-#define GLCall(x) x;
-#endif
+    void Clear() const;
+    void Draw(const VertexArray&, const IndexBuffer&, const Shader&) const;
+};
 
-void GLClearError();
-bool GLLogCall(const char *function, const char *file, int line);
