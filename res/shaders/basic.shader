@@ -6,9 +6,11 @@ layout (location = 1) in vec2 texCoord;
 
 out vec2 v_TexCoords;
 
+uniform mat4 u_MVP;
+
 void main() {
-    gl_Position = position;
-    v_TexCoords = texCoord;
+    gl_Position = u_MVP * position;
+    v_TexCoords = texCoord; 
 }
 
 #shader fragment
