@@ -1,4 +1,5 @@
 #define GL_SILENCE_DEPRECATION
+#define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
 #include <iostream>
 #include <fstream>
@@ -14,8 +15,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "ErrorHandler.h"
+#include "vendor/imgui/imgui.h"
+#include "vendor/imgui/imgui_impl_glfw.h"
+#include "vendor/imgui/imgui_impl_opengl3.h"
 
+#include "ErrorHandler.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
@@ -32,6 +36,8 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+    const char *glsl_version = "#version 410 core";
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -40,7 +46,7 @@ int main(void)
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
 
     if (!window)
     {
@@ -68,10 +74,10 @@ int main(void)
     // DRAWING ONE TRIANGLE
     {
         float positions[]{
-            -0.5f, -0.5f, 0.0f, 0.0f,
-            0.5f, -0.5f, 1.0f, 0.0f,
-            0.5f, 0.5f, 1.0f, 1.0f,
-            -0.5f, 0.5f, 0.0f, 1.0f
+            -100.f, -100.f, 0.0f, 0.0f,
+            100.f, -100.f, 1.0f, 0.0f,
+            100.f, 100.f, 1.0f, 1.0f,
+            -100.f, 100.f, 0.0f, 1.0f
         };
 
         unsigned int indices[] = {
@@ -79,7 +85,8 @@ int main(void)
             2, 3, 0
         };
 
-        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.f, -1.0f, 1.0f);
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
 
         GLCall(glEnable(GL_BLEND));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); // 1 - src.a;
@@ -102,7 +109,6 @@ int main(void)
         Shader shader(shaderPath);
 
         shader.Bind();
-        shader.SetUniformMat4f("u_MVP", proj);
 
         std::string texturePath = "res/textures/cherno.png";
         Texture texture(texturePath);
@@ -120,8 +126,27 @@ int main(void)
 
         Renderer renderer;
 
-        /* Loop until the user closes the window */
-        while (!glfwWindowShouldClose(window))
+        /* IMGUI */
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO &io = ImGui::GetIO();
+        (void)io;
+
+        // Setup Dear ImGui style
+        ImGui::StyleColorsDark();
+
+        // Setup Platform/Renderer bindings
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init(glsl_version);
+
+        bool show_demo_window = true;
+        bool show_another_window = false;
+        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+        glm::vec3 translation = glm::vec3(960 / 2, 540 / 2, 0);
+
+            /* Loop until the user closes the window */
+            while (!glfwWindowShouldClose(window))
         {
             /* Render here */
             auto t_now = std::chrono::high_resolution_clock::now();
@@ -131,11 +156,34 @@ int main(void)
 
             renderer.Clear();
 
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+            glm::mat4 mvp = proj * view * model;
+
             shader.Bind();
             shader.SetUniform4f("u_Color", r, 0.0f, 1.0f, 1.0f); // because our texture slot is bound to slot 0
+            shader.SetUniformMat4f("u_MVP", mvp);
 
             /* Draw call */
             renderer.Draw(va, ibo, shader);
+
+            // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+            {
+                static float f = 0.0f;
+                static int counter = 0;
+
+                ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+                ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
+
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                ImGui::End();
+            }
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
@@ -144,6 +192,10 @@ int main(void)
             glfwPollEvents();
         }
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwTerminate();
     return 0;
