@@ -1,46 +1,68 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-#include <glm/glm.hpp>
+#include <GL/glew.h>
+#include "File.h"
 
-struct ShaderProgramSource
+static enum class ShaderTypes
 {
-    std::string VertexSource;
-    std::string FragmentSource;
+	VERTEX,
+	TESS_CTRL,
+	TESS_EVAL,
+	GEOMETRY,
+	FRAGMENT,
 };
 
-enum class ShaderType
-{
-    NONE = -1,
-    VERTEX = 0,
-    FRAGMENT = 1
-};
-
-class Shader
+struct Shader
 {
 private:
-    std::string m_FilePath;
-    unsigned int m_RendererID;
-    std::unordered_map<std::string, int> m_UniformLocationCache;
-
+	ShaderTypes m_type;
+	std::string m_path;
+	std::string m_src;
+	int m_GLType;
+	std::string m_name;
 public:
-    Shader(const std::string &filePath);
-    ~Shader();
+	Shader(const ShaderTypes type, const std::string& path)
+	{
+		m_type = type;
+		m_path = path;
+		m_src = Read(path);
 
-    void Bind() const;
-    void Unbind() const;
+		switch (type)
+		{
+			case ShaderTypes::VERTEX:
+				m_GLType = GL_VERTEX_SHADER;
+				m_name = "Vertex";
+				break;
+			case ShaderTypes::TESS_CTRL:
+				m_GLType = GL_TESS_CONTROL_SHADER;
+				m_name = "Tesselation Control";
+				break;
+			case ShaderTypes::TESS_EVAL:
+				m_GLType = GL_TESS_EVALUATION_SHADER;
+				m_name = "Tesselation Evaluation";
+				break;
+			case ShaderTypes::GEOMETRY:
+				m_GLType = GL_GEOMETRY_SHADER;
+				m_name = "Geometry";
+				break;
+			case ShaderTypes::FRAGMENT:
+				m_GLType = GL_FRAGMENT_SHADER;
+				m_name = "Fragment";
+				break;
+			default:
+				break;
+		}
+	};
 
-    void SetUniform1i(const std::string &name, int value);
-    void SetUniform1f(const std::string &name, float value);
-    void SetUniform4f(const std::string &name, float v0, float v1, float v2, float v3);
-    void SetUniformMat4f(const std::string &name, const glm::mat4 &matrix);
+	ShaderTypes getType() const { return m_type; };
+	std::string getPath() const { return m_path; };
+	std::string getSource() const { return m_src; };
+	std::string getName() const { return m_name; };
+	int getGLType() const { return m_GLType; };
 
-private:
-    ShaderProgramSource ParseShader(const std::string &filePath);
-    
-    unsigned int CompileShader(unsigned int type, const std::string &source);
-    unsigned int CreateShaders(const std::string &vertexShader, const std::string &fragmentShader);
-
-    int GetUniformLocation(const std::string &name);
+	static const ShaderTypes VERTEX = ShaderTypes::VERTEX;
+	static const ShaderTypes TESS_CTRL = ShaderTypes::TESS_CTRL;
+	static const ShaderTypes TESS_EVAL = ShaderTypes::TESS_EVAL;
+	static const ShaderTypes GEOMETRY = ShaderTypes::GEOMETRY;
+	static const ShaderTypes FRAGMENT = ShaderTypes::FRAGMENT;
 };

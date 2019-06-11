@@ -2,21 +2,22 @@
 #define DEBUG
 
 #include <GL/glew.h>
+#include <iostream>
 
 #define ASSERT(x) \
     if (!(x))     \
-    __builtin_debugtrap()
+    __debugbreak();
 
 #ifdef DEBUG
-#define GLCall(x)   \
+#define GL(x)   \
     GLClearError(); \
     x;              \
     ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 #else
-#define GLCall(x) x;
+#define GL(x) x;
 #endif
 
 #define LOG(x) std::cout << (x) << std::endl
 
 void GLClearError();
-bool GLLogCall(const char *function, const char *file, int line);
+bool GLLogCall(const char* function, const char* file, int line);

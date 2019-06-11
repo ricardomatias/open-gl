@@ -1,45 +1,40 @@
-#include "Texture.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
 
 #include "ErrorHandler.h"
-#include "vendor/stb_image/stb_image.h"
+#include "Texture.h"
 
-Texture::Texture(std::string &filePath)
-    : m_RendererID(0), m_FilePath(filePath), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0)
+Texture::Texture(const std::string &imgPath, GLint textureSlot, GLint pixelFormat)
+	: m_path(imgPath), m_texSlot(textureSlot)
 {
-    stbi_set_flip_vertically_on_load(1); // coz in openGL the 0 is on the bottom-left corner not on the top-left like in pngs
+	stbi_set_flip_vertically_on_load(true);
 
-    m_LocalBuffer = stbi_load(filePath.c_str(), &m_Width, &m_Height, &m_BPP, 4);
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(imgPath.c_str(), &width, &height, &nrChannels, 0);
 
-    GLCall(glGenTextures(1, &m_RendererID));
-    GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+	GLuint texture;
+	GL(glGenTextures(1, &texture));
 
-    // MUST SPECIFY THESE PARAMETERS
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)); // In case the texture rendering area is smaller
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)); // In case the texture rendering area is larger
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));// do not extend the area - horizontally (S coordinate)
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));// do not extend the area - vertically (T coordinate)
+	m_id = texture;
 
-    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
+	GL(glActiveTexture(textureSlot));
+	GL(glBindTexture(GL_TEXTURE_2D, texture));
 
-    GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+	GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+	GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
-    if (m_LocalBuffer) {
-        stbi_image_free(m_LocalBuffer);
-    }
-}
+	if (data)
+	{
 
-Texture::~Texture()
-{
-    GLCall(glDeleteTextures(1, &m_RendererID));
-}
+		GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, pixelFormat, GL_UNSIGNED_BYTE, data));
+		GL(glGenerateMipmap(GL_TEXTURE_2D));
+	}
+	else
+	{
+		LOG("Failed to load texture");
+	}
 
-void Texture::Bind(unsigned int slot) const
-{
-    GLCall(glActiveTexture(GL_TEXTURE0 + slot)); // first slot.. then GL_TEXTURE1, GL_TEXTURE2.. GL_TEXTURE31
-    GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
-}
-
-void Texture::Unbind() const
-{
-    GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+	stbi_image_free(data); // free memory
 }
