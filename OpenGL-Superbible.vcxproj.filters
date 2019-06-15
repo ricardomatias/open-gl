@@ -60,6 +60,15 @@
     <ClCompile Include="src\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ReadFile.h">
@@ -116,7 +125,13 @@
     <ClInclude Include="src\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Material.h">
+    <ClInclude Include="src\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -145,5 +160,17 @@
     <None Include="res\shaders\lighting\light.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\shaders\material\basic.frag" />
+    <None Include="res\shaders\material\maps.frag" />
+    <None Include="res\shaders\material\maps.vert" />
+    <None Include="res\shaders\lighting\directional.frag" />
+    <None Include="res\shaders\lighting\point.frag" />
+    <None Include="res\shaders\lighting\spotlight.frag" />
+    <None Include="res\shaders\lighting\combined.frag" />
+    <None Include="res\shaders\model\basic.vert" />
+    <None Include="res\shaders\model\basic.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="conanfile.txt" />
   </ItemGroup>
 </Project>

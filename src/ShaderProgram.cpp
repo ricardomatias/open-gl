@@ -5,37 +5,6 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
-ShaderProgram::ShaderProgram(std::vector<Shader>& shaders)
-	: m_shaders(shaders)
-{
-	m_id = CompileShaders();
-}
-
-ShaderProgram::~ShaderProgram()
-{
-	GL(glDeleteProgram(m_id));
-}
-
-GLuint ShaderProgram::CompileShader(Shader shader) {
-	
-	GLuint id = 0;
-	std::string src = shader.getSource();
-
-	const char* cSrc = src.c_str();
-
-	GL((id = glCreateShader(shader.getGLType())));
-	GL(glShaderSource(id, 1, &cSrc, NULL));
-	GL(glCompileShader(id));
-
-	if (GetStatus(id, Status::SHADER, GL_COMPILE_STATUS, shader.getName(), "COMPILATION FAILURE") != GL_TRUE)
-	{
-		return 0;
-	}
-
-	return id;
-}
-
 GLuint ShaderProgram::GetStatus(GLuint id, Status type, GLint statusType, const std::string &errorType, const std::string &errorMsg) {
 	GLint success = 0;
 
@@ -76,32 +45,53 @@ GLuint ShaderProgram::GetStatus(GLuint id, Status type, GLint statusType, const 
 	return GL_TRUE;
 }
 
-GLuint ShaderProgram::CompileShaders()
+GLuint ShaderProgram::compileShader(Shader* shader) {
+
+	GLuint id = 0;
+	std::string src = shader->getSource();
+
+	const char* cSrc = src.c_str();
+
+	GL((id = glCreateShader(shader->getGLType())));
+	GL(glShaderSource(id, 1, &cSrc, NULL));
+	GL(glCompileShader(id));
+
+	if (GetStatus(id, Status::SHADER, GL_COMPILE_STATUS, shader->getName(), "COMPILATION FAILURE") != GL_TRUE)
+	{
+		return 0;
+	}
+
+	return id;
+}
+
+void ShaderProgram::compileShaders(std::vector<Shader*> &shaders)
 {
 	GLuint program = glCreateProgram();
 
-	for (auto shader = m_shaders.cbegin(); shader != m_shaders.cend(); shader++)
+	for (auto shader = shaders.begin(); shader != shaders.end(); shader++)
 	{
-		GLuint shaderID = CompileShader(*shader);
+		GLuint shaderID = compileShader(*shader);
 
 		GL(glAttachShader(program, shaderID));
 
-		m_activeShaders.push_back(shaderID);
+		(*shader)->setID(shaderID);
+
+		m_shaders.push_back(*shader);
 	}
 
 	GL(glLinkProgram(program));
 
 	if (GetStatus(program, Status::PROGRAM, GL_LINK_STATUS, "ShaderProgram", "LINKING FAILURE") != GL_TRUE)
 	{
-		return 0; // not the best way to do it
+		return; // not the best way to do it
 	}
 
-	for (auto shader = m_activeShaders.cbegin(); shader != m_activeShaders.cend(); shader++)
+	for (auto shader = m_shaders.cbegin(); shader != m_shaders.cend(); shader++)
 	{
-		GL(glDeleteShader(*shader));
+		GL(glDeleteShader((*shader)->ID()));
 	}
 
-	return program;
+	m_id = program;
 }
 
 void ShaderProgram::Bind() const
@@ -116,7 +106,7 @@ void ShaderProgram::Unbind() const
 }
 
 void ShaderProgram::setUniformMat4(const std::string &name, const glm::mat4 &matrix) const {
-	GLfloat location;
+	GLint location;
 
 	GL((location = glGetUniformLocation(m_id, name.c_str())));
 
@@ -124,25 +114,25 @@ void ShaderProgram::setUniformMat4(const std::string &name, const glm::mat4 &mat
 }
 
 void ShaderProgram::setUniformMat3(const std::string &name, const glm::mat3 &matrix) const {
-	GLfloat location;
+	GLint location;
 
 	GL((location = glGetUniformLocation(m_id, name.c_str())));
 
 	GL(glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix)));
 }
 
-void ShaderProgram::setUniform1f(const std::string& name, float value) const
+void ShaderProgram::setUniformf(const std::string& name, float value) const
 {
-	GLfloat location;
+	GLint location;
 
 	GL((location = glGetUniformLocation(m_id, name.c_str())));
 
 	GL(glUniform1f(location, value));
 }
 
-void ShaderProgram::setUniform1i(const std::string& name, float value) const
+void ShaderProgram::setUniformi(const std::string& name, int value) const
 {
-	GLfloat location;
+	GLint location;
 
 	GL((location = glGetUniformLocation(m_id, name.c_str())));
 
@@ -151,9 +141,28 @@ void ShaderProgram::setUniform1i(const std::string& name, float value) const
 
 void ShaderProgram::setUniformVec3(const std::string& name, const glm::vec3 &vector) const
 {
-	GLfloat location;
+	GLint location;
 
 	GL((location = glGetUniformLocation(m_id, name.c_str())));
 
 	GL(glUniform3fv(location, 1, glm::value_ptr(vector)));
 }
+
+void ShaderProgram::setUniformArrayVec3(const std::string& name, const std::vector<glm::vec3> vectors) const
+{
+	GLint location;
+
+	GL((location = glGetUniformLocation(m_id, name.c_str())));
+
+	GL(glUniform3fv(location, (GLsizei)vectors.size(), glm::value_ptr(vectors[0])));
+}
+
+void ShaderProgram::setUniformVec3(const std::string& name, float x, float y, float z) const
+{
+	GLint location;
+
+	GL((location = glGetUniformLocation(m_id, name.c_str())));
+
+	GL(glUniform3f(location, x, y, z));
+}
+

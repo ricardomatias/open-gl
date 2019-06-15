@@ -41,10 +41,25 @@ void Camera::update()
 
 void Camera::move(CameraDirection direction, float deltaTime)
 {
-	glm::vec3 displacement = m_speed * deltaTime * m_front;
+	float speed = m_speed * deltaTime;
 
-	if (direction == CameraDirection::FORWARD) m_position += displacement;
-	if (direction == CameraDirection::BACKWARD) m_position -= displacement;
+	switch (direction)
+	{
+		case CameraDirection::FORWARD:
+			m_position += speed * m_front;
+			break;
+		case CameraDirection::BACKWARD:
+			m_position -= speed * m_front;
+			break;
+		case CameraDirection::UP:
+			m_position += speed * m_up;
+			break;
+		case CameraDirection::DOWN:
+			m_position -= speed * m_up;
+			break;
+		default:
+			break;
+	}
 }
 
 void Camera::strafe(CameraDirection direction, float deltaTime)

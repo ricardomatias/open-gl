@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
@@ -12,10 +13,12 @@ static const glm::vec3 WORLD_UP(0, 1, 0);
 
 enum struct CameraDirection
 {
-	FORWARD = 0,
-	BACKWARD = 1,
-	LEFT = 2,
-	RIGHT = 3
+	FORWARD,
+	BACKWARD,
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN,
 };
 
 class Camera
@@ -37,8 +40,10 @@ private:
 	void update();
 public:
 	Camera(const glm::vec3& pos, const glm::vec3& target, float speed);
+	~Camera() { std::cout << "[Camera] destroyed" << std::endl; };
 
 	glm::vec3 getPosition() const { return m_position; };
+	glm::vec3 getFront() const { return m_front; };
 	glm::vec3 getLookAt() const { return m_position + m_front; };
 	glm::vec3 getTarget() const { return m_target; };
 

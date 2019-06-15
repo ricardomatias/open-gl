@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="Conan-RootDirs">
+    <Conan-Assimp-Root>$(USERPROFILE)\.conan\data\Assimp\4.1.0\jacmoe\stable\package\0b1aee7b27629775e05d7e6741d756cc5ded3de2</Conan-Assimp-Root>
+    <Conan-glfw-Root>$(USERPROFILE)\.conan\data\glfw\3.3\bincrafters\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1</Conan-glfw-Root>
+    <Conan-glm-Root>$(USERPROFILE)\.conan\data\glm\0.9.9.4\g-truc\stable\package\5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9</Conan-glm-Root>
+    <Conan-zlib-Root>$(USERPROFILE)\.conan\data\zlib\1.2.11\conan\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1</Conan-zlib-Root>
+    <Conan-IrrXML-Root>$(USERPROFILE)\.conan\data\IrrXML\1.2\conan\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1</Conan-IrrXML-Root>
+  </PropertyGroup>
+    <PropertyGroup Label="ConanVariables">
+    <ConanBinaryDirectories>$(USERPROFILE)\.conan\data\glfw\3.3\bincrafters\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\bin;;%(ConanBinaryDirectories)</ConanBinaryDirectories>
+    <ConanResourceDirectories>;%(ConanResourceDirectories)$(</ConanResourceDirectories>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LocalDebuggerEnvironment>PATH=%PATH%;$(USERPROFILE)\.conan\data\glfw\3.3\bincrafters\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\bin;</LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(USERPROFILE)\.conan\data\Assimp\4.1.0\jacmoe\stable\package\0b1aee7b27629775e05d7e6741d756cc5ded3de2\include;$(USERPROFILE)\.conan\data\glfw\3.3\bincrafters\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\include;$(USERPROFILE)\.conan\data\glm\0.9.9.4\g-truc\stable\package\5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9\include;$(USERPROFILE)\.conan\data\zlib\1.2.11\conan\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\include;$(USERPROFILE)\.conan\data\IrrXML\1.2\conan\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(USERPROFILE)\.conan\data\Assimp\4.1.0\jacmoe\stable\package\0b1aee7b27629775e05d7e6741d756cc5ded3de2\lib;$(USERPROFILE)\.conan\data\glfw\3.3\bincrafters\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\lib;$(USERPROFILE)\.conan\data\zlib\1.2.11\conan\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\lib;$(USERPROFILE)\.conan\data\IrrXML\1.2\conan\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc140-mt.lib;glfw3.lib;zlib.lib;IrrXMLd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <Midl>
+      <AdditionalIncludeDirectories>$(USERPROFILE)\.conan\data\Assimp\4.1.0\jacmoe\stable\package\0b1aee7b27629775e05d7e6741d756cc5ded3de2\include;$(USERPROFILE)\.conan\data\glfw\3.3\bincrafters\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\include;$(USERPROFILE)\.conan\data\glm\0.9.9.4\g-truc\stable\package\5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9\include;$(USERPROFILE)\.conan\data\zlib\1.2.11\conan\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\include;$(USERPROFILE)\.conan\data\IrrXML\1.2\conan\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </Midl>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(USERPROFILE)\.conan\data\Assimp\4.1.0\jacmoe\stable\package\0b1aee7b27629775e05d7e6741d756cc5ded3de2\include;$(USERPROFILE)\.conan\data\glfw\3.3\bincrafters\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\include;$(USERPROFILE)\.conan\data\glm\0.9.9.4\g-truc\stable\package\5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9\include;$(USERPROFILE)\.conan\data\zlib\1.2.11\conan\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\include;$(USERPROFILE)\.conan\data\IrrXML\1.2\conan\stable\package\b786e9ece960c3a76378ca4d5b0d0e922f4cedc1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

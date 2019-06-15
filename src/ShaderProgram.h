@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 #include <string>
 #include <glm\ext\matrix_float4x4.hpp>
 
@@ -17,30 +18,35 @@ enum class Status
 class ShaderProgram
 {
 private:
-	unsigned int m_id;
+	GLuint m_id;
 
-	std::vector<Shader> m_shaders;
-	std::vector<int> m_activeShaders;
+	std::vector<Shader*> m_shaders;
 public:
-
-	ShaderProgram(std::vector<Shader> &shaders);
-	~ShaderProgram();
+	ShaderProgram()
+		: m_id(0), m_shaders(std::vector<Shader*>{}) {};
+	~ShaderProgram() {
+		std::cout << "[ShaderProgram] destroyed" << std::endl;
+	};
 
 	unsigned int ID() const { return m_id; };
 
-	GLuint CompileShaders();
-	GLuint CompileShader(Shader shader);
+	GLuint compileShader(Shader* shader);
+	void compileShaders(std::vector<Shader*> &shaders);
 
 	GLuint GetStatus(GLuint id, Status type, GLint statusType, const std::string& errorType, const std::string& errorMsg);
 
 	void Bind() const;
 	void Unbind() const;
 
-	void setUniform1f(const std::string& name, float value) const;
-	void setUniform1i(const std::string& name, float value) const;
+	void setUniformf(const std::string& name, float value) const;
+	void setUniformi(const std::string& name, int value) const;
 
 	void setUniformMat3(const std::string& name, const glm::mat3& matrix) const;
 	void setUniformMat4(const std::string& name, const glm::mat4& matrix) const;
 
 	void setUniformVec3(const std::string& name, const glm::vec3& vector) const;
+	void setUniformVec3(const std::string& name, float x, float y, float z) const;
+
+	void setUniformArrayVec3(const std::string& name, const std::vector<glm::vec3> vectors) const;
 };
+

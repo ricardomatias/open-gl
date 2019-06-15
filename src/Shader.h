@@ -1,9 +1,10 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <iostream>
 #include "File.h"
 
-static enum class ShaderTypes
+enum class ShaderTypes
 {
 	VERTEX,
 	TESS_CTRL,
@@ -15,16 +16,15 @@ static enum class ShaderTypes
 struct Shader
 {
 private:
+	GLuint m_id;
 	ShaderTypes m_type;
 	std::string m_path;
 	std::string m_src;
 	int m_GLType;
 	std::string m_name;
 public:
-	Shader(const ShaderTypes type, const std::string& path)
+	Shader(const ShaderTypes type, const std::string& path) : m_id(0), m_type(type), m_path(path)
 	{
-		m_type = type;
-		m_path = path;
 		m_src = Read(path);
 
 		switch (type)
@@ -53,6 +53,11 @@ public:
 				break;
 		}
 	};
+
+	~Shader() { std::cout << "[Shader] destroyed" << std::endl; };
+
+	GLuint ID() const { return m_id; };
+	void setID(GLuint id) { m_id = id; };
 
 	ShaderTypes getType() const { return m_type; };
 	std::string getPath() const { return m_path; };

@@ -1,0 +1,7 @@
+[requires]
+Assimp/4.1.0@jacmoe/stable
+glfw/3.3@bincrafters/stable
+glm/0.9.9.4@g-truc/stable
+
+[generators]
+visual_studio_multi
