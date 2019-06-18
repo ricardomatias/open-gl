@@ -5,6 +5,7 @@
 #include "Texture.h"
 
 
+const std::string Texture::DEFAULT = "texture";
 const std::string Texture::DIFFUSE = "diffuseTex";
 const std::string Texture::SPECULAR = "specularTex";
 
@@ -62,9 +63,9 @@ void Texture::Bind()
 
 void Texture::Unbind()
 {
-	GLuint textures[] = { m_texSlot };
+	GLenum textures[] = { m_texSlot };
 
-	std::cout << "Unbindg Texture " << m_texSlot << std::endl;
+	std::cout << "[Texture] Unbinding [" << std::hex << m_texSlot << "]" << std::endl;
 
 	GL(glDeleteTextures(1, textures));
 }

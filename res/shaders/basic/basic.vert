@@ -1,23 +1,19 @@
 #version 450 core
 
 // 'offset' is an input vertex attribute
-layout (location = 0) in vec4 aPosition;
+layout (location = 0) in vec3 aPosition;
 layout (location = 1) in vec2 aTexCoords;
 
-out VS_OUT {
-	vec4 position;
-	vec2 texCoords;
-} vs_out;
+out vec2 texCoords;
 
-uniform mat4 u_Proj;
-uniform mat4 u_View;
-uniform mat4 u_Model;
+uniform mat4 uProj;
+uniform mat4 uView;
+uniform mat4 uModel;
 
 void main() {
 	// Add 'offset' to our hard-coded vertex position
-	gl_Position = u_Proj * u_View * u_Model * aPosition;
+	gl_Position = uProj * uView * uModel * vec4(aPosition, 1.0);
 
-	vs_out.position = aPosition;
-	vs_out.texCoords = aTexCoords;
+	texCoords = aTexCoords;
 	// Output a fixed value for vs_color
 }

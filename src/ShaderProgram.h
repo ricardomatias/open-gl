@@ -9,6 +9,8 @@
 
 #include "File.h"
 
+typedef std::shared_ptr<Shader> ShaderPointer;
+
 enum class Status
 {
 	SHADER,
@@ -17,21 +19,25 @@ enum class Status
 
 class ShaderProgram
 {
-private:
 	GLuint m_id;
 
-	std::vector<Shader*> m_shaders;
+	std::vector<ShaderPointer> m_shaders;
+
+	void compileShader(ShaderPointer& shader);
 public:
 	ShaderProgram()
-		: m_id(0), m_shaders(std::vector<Shader*>{}) {};
+		: m_id(0), m_shaders(std::vector<ShaderPointer>()) {};
 	~ShaderProgram() {
+		Unbind();
+
+		m_shaders.clear();
+
 		std::cout << "[ShaderProgram] destroyed" << std::endl;
 	};
 
 	unsigned int ID() const { return m_id; };
 
-	GLuint compileShader(Shader* shader);
-	void compileShaders(std::vector<Shader*> &shaders);
+	void compileShaders(std::vector<ShaderPointer> &shaders);
 
 	GLuint GetStatus(GLuint id, Status type, GLint statusType, const std::string& errorType, const std::string& errorMsg);
 

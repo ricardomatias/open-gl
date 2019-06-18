@@ -12,18 +12,20 @@ void Model::loadModel(const std::string &path)
 		return;
 	}
 
-	directory = path.substr(0, path.find_last_of('/'));
+	m_directory = path.substr(0, path.find_last_of('/'));
 
 	processNode(scene->mRootNode, scene);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
 {
+	if (node->mNumMeshes > 0) std::cout << "[aiNode] Loading " << node->mNumMeshes << " meshes from: " << node->mName.C_Str() << std::endl;
+
 	// process all the node's meshes (if any)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(processMesh(mesh, scene));
+		m_meshes.push_back(processMesh(mesh, scene));
 	}
 	// then do the same for each of its children
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -32,11 +34,11 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	}
 }
 
-Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
+std::shared_ptr<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
+	std::vector<TexturePointer> textures;
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -70,6 +72,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 		vertices.push_back(vertex);
 	}
+
 	// process indices
 	// Assimp's interface defined each mesh having an array of faces where each face represents a single primitive,
 	// which in our case (due to the aiProcess_Triangulate option) are always triangles
@@ -88,19 +91,26 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-		std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, Texture::DIFFUSE);
+		std::vector<TexturePointer> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, Texture::DIFFUSE);
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
-		std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, Texture::SPECULAR);
+		std::vector<TexturePointer> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, Texture::SPECULAR);
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	}
 
-	return Mesh(vertices, indices, textures);
+	for (unsigned int i = 0; i < textures.size(); i++)
+	{
+		GLenum texSlot = GL_TEXTURE0 + i;
+
+		textures[i]->setTexSlot(texSlot);
+	}
+
+	return std::make_shared<Mesh>( vertices, indices, textures );
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+std::vector<TexturePointer> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
-	std::vector<Texture> textures;
+	std::vector<TexturePointer> textures;
 
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 	{
@@ -110,16 +120,16 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 		// check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
 		bool skip = false;
 
-		for (unsigned int j = 0; j < loadedTextures.size(); j++)
+		for (unsigned int j = 0; j < m_loadedTextures.size(); j++)
 		{
 			std::string path = (std::string)str.C_Str();
-			std::string cachedFilename = directory + "/" + path;
+			std::string cachedFilename = m_directory + "/" + path;
 
-			std::string filename = loadedTextures[j].getPath();
+			std::string filename = m_loadedTextures[j]->getPath();
 
 			if (std::strcmp(filename.c_str(), cachedFilename.c_str()) == 0)
 			{
-				textures.push_back(loadedTextures[j]);
+				textures.emplace_back(m_loadedTextures[j]);
 				skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
 				break;
 			}
@@ -128,14 +138,17 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 		{   // if texture hasn't been loaded already, load it
 			std::string path = (std::string)str.C_Str();
 
-			std::string filename = directory + "/" + path;
+			std::string filename = m_directory + "/" + path;
 
-			Texture texture(filename, GL_TEXTURE0 + i, typeName);
-			texture.load();
+			TexturePointer texture = std::make_shared<Texture>(filename, typeName);
 
-			textures.push_back(texture);
+			std::cout << "[Texture] Loaded " << typeName << " from " << filename << std::endl;
 
-			loadedTextures.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
+			texture->load();
+
+			textures.emplace_back(texture);
+
+			m_loadedTextures.emplace_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
 		}
 	}
 
@@ -144,9 +157,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 
 void Model::Draw(std::shared_ptr<ShaderProgram> &shader)
 {
-	for (unsigned int i = 0; i < meshes.size(); i++)
+	for (unsigned int i = 0; i < m_meshes.size(); i++)
 	{
-		meshes[i].Draw(shader);
+		m_meshes[i]->Draw(shader);
 	}
 }
 

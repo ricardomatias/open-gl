@@ -20,7 +20,7 @@ private:
 	ShaderTypes m_type;
 	std::string m_path;
 	std::string m_src;
-	int m_GLType;
+	int m_glType;
 	std::string m_name;
 public:
 	Shader(const ShaderTypes type, const std::string& path) : m_id(0), m_type(type), m_path(path)
@@ -30,23 +30,23 @@ public:
 		switch (type)
 		{
 			case ShaderTypes::VERTEX:
-				m_GLType = GL_VERTEX_SHADER;
+				m_glType = GL_VERTEX_SHADER;
 				m_name = "Vertex";
 				break;
 			case ShaderTypes::TESS_CTRL:
-				m_GLType = GL_TESS_CONTROL_SHADER;
+				m_glType = GL_TESS_CONTROL_SHADER;
 				m_name = "Tesselation Control";
 				break;
 			case ShaderTypes::TESS_EVAL:
-				m_GLType = GL_TESS_EVALUATION_SHADER;
+				m_glType = GL_TESS_EVALUATION_SHADER;
 				m_name = "Tesselation Evaluation";
 				break;
 			case ShaderTypes::GEOMETRY:
-				m_GLType = GL_GEOMETRY_SHADER;
+				m_glType = GL_GEOMETRY_SHADER;
 				m_name = "Geometry";
 				break;
 			case ShaderTypes::FRAGMENT:
-				m_GLType = GL_FRAGMENT_SHADER;
+				m_glType = GL_FRAGMENT_SHADER;
 				m_name = "Fragment";
 				break;
 			default:
@@ -54,7 +54,9 @@ public:
 		}
 	};
 
-	~Shader() { std::cout << "[Shader] destroyed" << std::endl; };
+	~Shader() {
+		std::cout << "[Shader] destroyed" << std::endl;
+	};
 
 	GLuint ID() const { return m_id; };
 	void setID(GLuint id) { m_id = id; };
@@ -63,7 +65,7 @@ public:
 	std::string getPath() const { return m_path; };
 	std::string getSource() const { return m_src; };
 	std::string getName() const { return m_name; };
-	int getGLType() const { return m_GLType; };
+	int getGLType() const { return m_glType; };
 
 	static const ShaderTypes VERTEX = ShaderTypes::VERTEX;
 	static const ShaderTypes TESS_CTRL = ShaderTypes::TESS_CTRL;

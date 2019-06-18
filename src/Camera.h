@@ -23,7 +23,6 @@ enum struct CameraDirection
 
 class Camera
 {
-private:
 	glm::vec3 m_position;
 	glm::vec3 m_target;
 	glm::vec3 m_direction; // z - axis

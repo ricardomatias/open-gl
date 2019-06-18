@@ -45,7 +45,7 @@ GLuint ShaderProgram::GetStatus(GLuint id, Status type, GLint statusType, const 
 	return GL_TRUE;
 }
 
-GLuint ShaderProgram::compileShader(Shader* shader) {
+void ShaderProgram::compileShader(ShaderPointer&shader) {
 
 	GLuint id = 0;
 	std::string src = shader->getSource();
@@ -58,26 +58,28 @@ GLuint ShaderProgram::compileShader(Shader* shader) {
 
 	if (GetStatus(id, Status::SHADER, GL_COMPILE_STATUS, shader->getName(), "COMPILATION FAILURE") != GL_TRUE)
 	{
-		return 0;
+		return;
 	}
 
-	return id;
+	shader->setID(id);
 }
 
-void ShaderProgram::compileShaders(std::vector<Shader*> &shaders)
+void ShaderProgram::compileShaders(std::vector<ShaderPointer> &shaders)
 {
 	GLuint program = glCreateProgram();
 
-	for (auto shader = shaders.begin(); shader != shaders.end(); shader++)
+	LOG(m_shaders.size());
+
+	for (auto shaderIter = shaders.begin(); shaderIter != shaders.end(); shaderIter++)
 	{
-		GLuint shaderID = compileShader(*shader);
+		ShaderPointer& shader = *shaderIter;
 
-		GL(glAttachShader(program, shaderID));
+		compileShader(*shaderIter);
 
-		(*shader)->setID(shaderID);
-
-		m_shaders.push_back(*shader);
+		GL(glAttachShader(program, shader->ID()));
 	}
+
+	m_shaders.insert(m_shaders.end(), shaders.begin(), shaders.end());
 
 	GL(glLinkProgram(program));
 

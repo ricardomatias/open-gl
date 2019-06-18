@@ -8,10 +8,10 @@ Camera::Camera(const glm::vec3& pos, const glm::vec3& target, const float speed 
 {
 	m_up = WORLD_UP;
 
-	m_front = glm::vec3(0, 0, -1);
+	m_front = glm::vec3(0.f, 0.f, -1.f);
 
 	m_direction = glm::normalize(m_position - m_target);
-	m_right = glm::normalize(glm::cross(m_up, m_direction));
+	m_right = WORLD_UP;
 
 	m_speed = speed;
 
@@ -28,9 +28,9 @@ void Camera::update()
 
 	// pitch -> angle between the plane ZX and Y
 	// yaw -> angle between X and Z
-	front.x = cos(pitch) * cos(yaw);
-	front.y = sin(pitch);
-	front.z = cos(pitch) * sin(yaw);
+	front.x = glm::cos(pitch) * glm::cos(yaw);
+	front.y = glm::sin(pitch);
+	front.z = glm::cos(pitch) * glm::sin(yaw);
 
 	m_front = glm::normalize(front);
 

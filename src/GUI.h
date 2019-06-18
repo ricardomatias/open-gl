@@ -10,13 +10,16 @@ private:
 	const char* m_glslVersion;
 public:
 	GUI(const char* glslVersion) : m_glslVersion(glslVersion) {};
-	~GUI();
 
 	void setup(GLFWwindow* window);
-	void draw(GLFWwindow* window);
+
+	void destroy();
+
+	void createFrame();
+	void draw();
 };
 
-GUI::~GUI()
+void GUI::destroy()
 {
 	// Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
@@ -46,15 +49,16 @@ void GUI::setup(GLFWwindow* window)
 }
 
 
-void GUI::draw(GLFWwindow* window)
+void GUI::createFrame()
 {
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+}
 
-	/* stuff to draw */
-
+void GUI::draw()
+{
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

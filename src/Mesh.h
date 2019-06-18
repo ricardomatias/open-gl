@@ -22,21 +22,24 @@ class Mesh
 {
 public:
 	/*  Mesh Data  */
-	std::vector<Vertex> vertices;
-	std::vector<GLuint> indices;
-	std::vector<Texture> textures;
+	std::vector<Vertex> m_vertices;
+	std::vector<GLuint> m_indices;
+	std::vector<TexturePointer> m_textures;
 
 	/*  Functions  */
-	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures);
-	~Mesh() { std::cout << "[Mesh] destroyed" << std::endl; };
+	Mesh(std::vector<Vertex> &vertices, std::vector<GLuint> &indices, std::vector<TexturePointer> &textures);
+	~Mesh() {
+		m_vertices.clear();
+		m_indices.clear();
+		m_textures.clear();
+
+		std::cout << "[Mesh] destroyed" << std::endl;
+	};
 
 	void Draw(std::shared_ptr<ShaderProgram> &shader);
 
 private:
-	GLint m_id;
 	/*  Render data  */
 	GLuint VAO, VBO, EBO;
-	/*  Functions    */
-	void Setup();
 };
 
