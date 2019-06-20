@@ -4,8 +4,8 @@
 #include "ErrorHandler.h"
 
 
-Renderer::Renderer(int winWidth, int winHeight)
-	: m_windowWidth(winWidth), m_windowHeight(winHeight), m_window(nullptr)
+Renderer::Renderer(int winWidth, int winHeight, const char* title)
+	: m_windowWidth(winWidth), m_windowHeight(winHeight), m_window(nullptr), m_title(title)
 {
 	glslVersion = "#version 450";
 
@@ -24,7 +24,7 @@ Renderer::Renderer(int winWidth, int winHeight)
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	/* Create a windowed mode window and its OpenGL context */
-	m_window = glfwCreateWindow(m_windowWidth, m_windowHeight, "OpenGL", NULL, NULL);
+	m_window = glfwCreateWindow(m_windowWidth, m_windowHeight, m_title, NULL, NULL);
 
 	if (!m_window)
 	{
@@ -58,10 +58,6 @@ Renderer::Renderer(int winWidth, int winHeight)
 	{
 		glDebugMessageCallback(glDebugCallback, NULL);
 	}
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_STENCIL_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 }
 
 Renderer::~Renderer()
@@ -79,10 +75,36 @@ void Renderer::run()
 {
 	setup();
 
+	int frames = 0;
+	int fps = 0;
+	double lastTime = 0.0;
+	double frameTime = 0.0;
+
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(m_window))
 	{
 		draw();
+
+		const double currentFrame = glfwGetTime();
+
+		// Measure speed
+		frames++;
+
+		if (currentFrame - lastTime >= 1.0)
+		{ // If last prinf() was more than 1 sec ago
+		  // printf and reset timer
+			frameTime = 1000.0 / double(frames);
+			fps = frames;
+			frames = 0;
+			lastTime += 1.0;
+
+			char buffer[256];
+
+			sprintf_s(buffer, "%s - FPS: %i - Frame Time: %.3f ms", m_title, fps, frameTime);
+
+			glfwSetWindowTitle(m_window, buffer);
+		}
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(m_window);

@@ -28,7 +28,7 @@ public:
 	ShaderProgram()
 		: m_id(0), m_shaders(std::vector<ShaderPointer>()) {};
 	~ShaderProgram() {
-		Unbind();
+		unbind();
 
 		m_shaders.clear();
 
@@ -41,8 +41,8 @@ public:
 
 	GLuint GetStatus(GLuint id, Status type, GLint statusType, const std::string& errorType, const std::string& errorMsg);
 
-	void Bind() const;
-	void Unbind() const;
+	void bind() const;
+	void unbind() const;
 
 	void setUniformf(const std::string& name, float value) const;
 	void setUniformi(const std::string& name, int value) const;

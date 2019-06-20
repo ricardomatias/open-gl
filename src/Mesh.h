@@ -1,12 +1,10 @@
 #pragma once
 
-#include <string>
 #include <iostream>
 #include <vector>
 
 #include <glm/glm.hpp>
 
-#include "ErrorHandler.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 

@@ -48,7 +48,7 @@ GLuint ShaderProgram::GetStatus(GLuint id, Status type, GLint statusType, const 
 void ShaderProgram::compileShader(ShaderPointer&shader) {
 
 	GLuint id = 0;
-	std::string src = shader->getSource();
+	const std::string src = shader->getSource();
 
 	const char* cSrc = src.c_str();
 
@@ -66,9 +66,7 @@ void ShaderProgram::compileShader(ShaderPointer&shader) {
 
 void ShaderProgram::compileShaders(std::vector<ShaderPointer> &shaders)
 {
-	GLuint program = glCreateProgram();
-
-	LOG(m_shaders.size());
+	const GLuint program = glCreateProgram();
 
 	for (auto shaderIter = shaders.begin(); shaderIter != shaders.end(); shaderIter++)
 	{
@@ -96,13 +94,13 @@ void ShaderProgram::compileShaders(std::vector<ShaderPointer> &shaders)
 	m_id = program;
 }
 
-void ShaderProgram::Bind() const
+void ShaderProgram::bind() const
 {
 	GL(glUseProgram(m_id));
 }
 
 
-void ShaderProgram::Unbind() const
+void ShaderProgram::unbind() const
 {
 	GL(glDeleteProgram(m_id));
 }

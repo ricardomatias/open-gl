@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "ErrorHandler.h"
 
 
 Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<GLuint> &indices, std::vector<TexturePointer> &textures)
@@ -63,7 +64,7 @@ void Mesh::Draw(std::shared_ptr<ShaderProgram> &shader)
 	// DRAW MESH
 	GL(glBindVertexArray(VAO));
 
-	GL(glDrawElements(GL_TRIANGLES, (GLsizei)m_indices.size(), GL_UNSIGNED_INT, nullptr));
+	GL(glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, nullptr));
 
 	GL(glBindVertexArray(0)); // zero to break the existing vertex array object binding
 }

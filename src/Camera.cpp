@@ -1,7 +1,9 @@
-#include "Camera.h"
+#include <iostream>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/trigonometric.hpp>
-#include <iostream>
+
+#include "Camera.h"
 
 Camera::Camera(const glm::vec3& pos, const glm::vec3& target, const float speed = SPEED)
 	: m_position(pos), m_target(target)
@@ -78,4 +80,9 @@ void Camera::lookAround(float xoff, float yoff)
 	m_yaw = glm::mod(m_yaw + xoff, 360.f);
 	
 	update();
+}
+
+glm::mat4 Camera::getViewMatrix()
+{
+	return glm::lookAt(getPosition(), getLookAt(), WORLD_UP);
 }

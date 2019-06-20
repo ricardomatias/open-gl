@@ -39,7 +39,9 @@ class Camera
 	void update();
 public:
 	Camera(const glm::vec3& pos, const glm::vec3& target, float speed);
-	~Camera() { std::cout << "[Camera] destroyed" << std::endl; };
+	~Camera() { std::cout << "[Camera] destroyed" << std::endl; }
+
+	glm::mat4 getViewMatrix();
 
 	glm::vec3 getPosition() const { return m_position; };
 	glm::vec3 getFront() const { return m_front; };

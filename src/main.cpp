@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
 #include <chrono>
@@ -17,9 +16,11 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Cube.h"
-#include "Model.h"
 #include "GUI.h"
 #include "Plane.h"
+#include "ErrorHandler.h"
+#include "FrameBuffer.h"
+#include "Cubemap.h"
 
 namespace fs = std::filesystem;
 
@@ -45,22 +46,22 @@ GUI gui{ "#version 450" };
 class Application final : public Renderer
 {
 	std::shared_ptr<ShaderProgram> m_meshShaders;
-	std::shared_ptr<ShaderProgram> m_singleShader;
 
 	unsigned int m_cubeVao, m_cubeVbo;
 	unsigned int m_planeVao, m_planeVbo;
 
 	std::shared_ptr<Texture> m_cubeTexture;
 	std::shared_ptr<Texture> m_planeTexture;
+	std::shared_ptr<Cubemap> m_cubemap;
 public:
-	Application(const int windowWidth, const int windowHeight)
-		: Renderer{windowWidth, windowHeight},
+	Application(const int windowWidth, const int windowHeight, const char* title)
+		: Renderer{windowWidth, windowHeight, title},
 		  m_meshShaders(std::make_shared<ShaderProgram>()),
-		  m_singleShader(std::make_shared<ShaderProgram>()),
-		  fps(0), avgFrame(0), frames(0), deltaTime(0), lastTime(0),
+		  m_cubeVao(0), m_cubeVbo(0), m_planeVao(0), m_planeVbo(0),
+		  m_cubemap(std::make_shared<Cubemap>()),
+		  deltaTime(0),
 		  currentFrame(0), lastFrame(0)
-	{
-	};
+	{};
 	virtual ~Application();
 
 	virtual void setup();
@@ -68,10 +69,7 @@ public:
 
 	void drawCubes(std::shared_ptr<ShaderProgram>& shader, bool shouldScale = false);
 
-	int fps;
-	double avgFrame;
-	int frames;
-	double deltaTime, lastTime;
+	double deltaTime;
 	double currentFrame, lastFrame;
 };
 
@@ -94,66 +92,78 @@ void Application::setup()
 
 	// SHADERS
 	auto vert = std::make_shared<Shader>(Shader::VERTEX, std::string("res/shaders/basic/basic.vert"));
-	auto frag = std::make_shared<Shader>(Shader::FRAGMENT, std::string("res/shaders/basic/stencil-test.frag"));
+	auto frag = std::make_shared<Shader>(Shader::FRAGMENT, std::string("res/shaders/basic/texture.frag"));
 
 	std::vector<std::shared_ptr<Shader>> shaders{ std::move(vert), std::move(frag) };
 
 	m_meshShaders->compileShaders(shaders);
 
-	vert = std::make_shared<Shader>(Shader::VERTEX, std::string("res/shaders/basic/basic.vert"));
-	frag = std::make_shared<Shader>(Shader::FRAGMENT, std::string("res/shaders/basic/border.frag"));
-
-	shaders = std::vector<std::shared_ptr<Shader>>{ std::move(vert), std::move(frag) };
-
-	m_singleShader->compileShaders(shaders);
-
-	// CUBE
+	/** CUBE **/
 	glGenVertexArrays(1, &m_cubeVao);
 	glBindVertexArray(m_cubeVao);
 
 	glGenBuffers(1, &m_cubeVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_cubeVbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(CUBE), &CUBE, GL_STATIC_DRAW);
-	
+
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void*>(0));
-	
+
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
-	
+
 	glBindVertexArray(0);
 
-	// PLANE
+	/** PLANE **/
 	glGenVertexArrays(1, &m_planeVao);
 	glBindVertexArray(m_planeVao);
 
 	glGenBuffers(1, &m_planeVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_planeVbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(PLANE), &PLANE, GL_STATIC_DRAW);
-	
+
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), static_cast<void*>(0));
-	
+
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-	
+
 	glBindVertexArray(0);
+
+	/** SKYBOX **/
+	m_cubemap->createCube();
 
 	/** UNIFORMS **/
 	std::error_code ec;
 
-	const auto cubeTexPath = fs::absolute(fs::path("res/images/marble.jpg"), ec);
-	const auto planeTexPath = fs::absolute(fs::path("res/images/metal.png"), ec);
+	const std::string texPath = fs::absolute(fs::path("res/images"), ec).generic_string();
 
-	m_cubeTexture = std::make_shared<Texture>( cubeTexPath.generic_string(), GL_TEXTURE0 );
-	m_planeTexture = std::make_shared<Texture>( planeTexPath.generic_string(), GL_TEXTURE0 );
+	std::vector<std::string> faces
+	{
+		"right.jpg",
+		"left.jpg",
+		"top.jpg",
+		"bottom.jpg",
+		"front.jpg",
+		"back.jpg"
+	};
+
+	m_cubemap->load(texPath + "/skybox/", faces);
+
+	const std::string cubeTexPath = texPath + std::string("/container.jpg");
+	const std::string planeTexPath = texPath + std::string("/metal.png");
+
+	m_cubeTexture = std::make_shared<Texture>(cubeTexPath, GL_TEXTURE0);
+	m_planeTexture = std::make_shared<Texture>(planeTexPath, GL_TEXTURE0);
 
 	m_cubeTexture->load();
 	m_planeTexture->load();
 
-	m_meshShaders->Bind();
-
+	m_meshShaders->bind();
 	m_meshShaders->setUniformi("tex0", 0);
+
+	// draw as wireframe
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void Application::draw()
@@ -168,33 +178,24 @@ void Application::draw()
 	glfwSetScrollCallback(window, scrollCallback);
 	glfwSetCursorPosCallback(window, mouseCallback);
 
+	/** FIRST PASS **/
+	glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
 
-	glEnable(GL_DEPTH_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	//glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_REPLACE);
-	//glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_KEEP);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Simply clear the window with re
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-
-	glStencilMask(0x00); // make sure we don't update the stencil buffer while drawing the floor
-
-	glm::mat4 model = glm::mat4(1.f);
+	m_meshShaders->bind();
 
 	const glm::mat4 projection = glm::perspective(glm::radians(fov), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f);
-	const glm::mat4 view = lookAt(cam.getPosition(), cam.getLookAt(), glm::vec3(0, 1, 0));
-
-	glm::vec3 lightPosition(0.f, 2.f, -2.f);
-
-	m_meshShaders->Bind();
+	
+	glm::mat4 view = cam.getViewMatrix();
 
 	m_meshShaders->setUniformMat4("uProj", projection);
 	m_meshShaders->setUniformMat4("uView", view);
 
 	/** FLOOR DRAW **/
 	glBindVertexArray(m_planeVao);
-	glBindTexture(GL_TEXTURE_2D, m_planeTexture->ID());
+	m_planeTexture->Bind();
 
 	m_meshShaders->setUniformMat4("uModel", glm::mat4(1.0f));
 
@@ -202,59 +203,21 @@ void Application::draw()
 	glBindVertexArray(0);
 
 	/** CUBE DRAW **/
-	glStencilFunc(GL_ALWAYS, 1, 0xFF); // all fragments should update the stencil buffer
-	glStencilMask(0xFF); // enable writing to the stencil buffer
-
 	drawCubes(m_meshShaders);
 
-	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-	glStencilMask(0x00); // disable writing to the stencil buffer
-	glDisable(GL_DEPTH_TEST);
-
-	m_singleShader->Bind();
-
-	m_singleShader->setUniformMat4("uProj", projection);
-	m_singleShader->setUniformMat4("uView", view);
-
-	drawCubes(m_singleShader, true);
-
-	glStencilMask(0xFF);
-	glEnable(GL_DEPTH_TEST);
-
-
-	gui.createFrame();
-
-	{
-		// Measure speed
-		frames++;
-
-		if (currentFrame - lastTime >= 1.0)
-		{ // If last prinf() was more than 1 sec ago
-		  // printf and reset timer
-			avgFrame = 1000.0 / double(frames);
-			fps = frames;
-			frames = 0;
-			lastTime += 1.0;
-		}
-
-		ImGui::Begin("Hello, world!");
-		ImGui::Text("FPS: %i", fps);
-		ImGui::Text("Avg Frame: %f", avgFrame);
-		ImGui::End();
-	}
-
-	gui.draw();
+	/** SKYBOX DRAW **/
+	m_cubemap->draw(projection, view);
 }
 
-void Application::drawCubes(std::shared_ptr<ShaderProgram> &shader, bool shouldScale)
+void Application::drawCubes(std::shared_ptr<ShaderProgram>& shader, bool shouldScale)
 {
 	glm::mat4 model{ 1.f };
 
-	shader->Bind();
+	shader->bind();
 
 	glBindVertexArray(m_cubeVao);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_cubeTexture->ID());
+
+	m_cubeTexture->Bind();
 
 	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
 
@@ -282,7 +245,7 @@ void Application::drawCubes(std::shared_ptr<ShaderProgram> &shader, bool shouldS
 
 int main()
 {
-	Application app{ SCR_WIDTH, SCR_HEIGHT };
+	Application app{ SCR_WIDTH, SCR_HEIGHT, "OpenGL Tutorial" };
 
 	app.run();
 

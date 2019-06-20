@@ -167,6 +167,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Cubemap.cpp" />
     <ClCompile Include="extern\imgui\imgui\imgui.cpp" />
     <ClCompile Include="extern\imgui\imgui\imgui_demo.cpp" />
     <ClCompile Include="extern\imgui\imgui\imgui_draw.cpp" />
@@ -174,6 +175,7 @@
     <ClCompile Include="extern\imgui\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="extern\imgui\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\FrameBuffer.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
@@ -185,6 +187,7 @@
     <ClCompile Include="src\File.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Cubemap.h" />
     <ClInclude Include="extern\imgui\imgui\imconfig.h" />
     <ClInclude Include="extern\imgui\imgui\imgui.h" />
     <ClInclude Include="extern\imgui\imgui\imgui_impl_glfw.h" />
@@ -196,6 +199,7 @@
     <ClInclude Include="extern\stb\stb_image.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Cube.h" />
+    <ClInclude Include="src\FrameBuffer.h" />
     <ClInclude Include="src\GUI.h" />
     <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\Mesh.h" />
@@ -217,7 +221,11 @@
     <None Include="res\shaders\basic\basic.tese" />
     <None Include="res\shaders\basic\border.frag" />
     <None Include="res\shaders\basic\depth-test.frag" />
-    <None Include="res\shaders\basic\stencil-test.frag" />
+    <None Include="res\shaders\basic\fbo.vert" />
+    <None Include="res\shaders\basic\texture.frag" />
+    <None Include="res\shaders\cubemap.frag" />
+    <None Include="res\shaders\cubemap.vert" />
+    <None Include="res\shaders\kernels.frag" />
     <None Include="res\shaders\lighting\combined.frag" />
     <None Include="res\shaders\lighting\directional.frag" />
     <None Include="res\shaders\lighting\lamp.frag" />

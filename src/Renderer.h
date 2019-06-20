@@ -8,8 +8,10 @@ class Renderer
 {
 private:
 	GLFWwindow* m_window;
+
+	const char* m_title;
 public:
-	Renderer(int winWidth, int winHeight);
+	Renderer(int winWidth, int winHeight, const char* title);
 	virtual ~Renderer();
 
 	GLFWwindow* getWindow() const { return m_window; };

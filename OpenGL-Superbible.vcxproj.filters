@@ -72,6 +72,12 @@
     <ClCompile Include="src\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Cubemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ReadFile.h">
@@ -143,6 +149,12 @@
     <ClInclude Include="src\Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\FrameBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Cubemap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\basic\basic.vert">
@@ -180,8 +192,12 @@
     <None Include="res\shaders\model\basic.frag" />
     <None Include="res\shaders\lighting\lamp.vert" />
     <None Include="res\shaders\basic\depth-test.frag" />
-    <None Include="res\shaders\basic\stencil-test.frag" />
     <None Include="res\shaders\basic\border.frag" />
+    <None Include="res\shaders\basic\fbo.vert" />
+    <None Include="res\shaders\basic\texture.frag" />
+    <None Include="res\shaders\kernels.frag" />
+    <None Include="res\shaders\cubemap.frag" />
+    <None Include="res\shaders\cubemap.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="conanfile.txt" />
