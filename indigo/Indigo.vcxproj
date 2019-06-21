@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{D1D1A658-1A7E-435B-89B5-64EFA9C5FE2A}</ProjectGuid>
+    <RootNamespace>open-gl</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Indigo</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="build\conanbuildinfo_debug_win32_v141.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="build\conanbuildinfo_debug_x64_v141.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)indigo\include;$(SolutionDir)indigo\extern\glew\include;$(SolutionDir)indigo\extern\imgui;$(SolutionDir)indigo\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GLEW_STATIC;IMGUI_IMPL_OPENGL_LOADER_GLEW</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)indigo\extern\glew\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ProjectReference />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)indigo\include;$(SolutionDir)indigo\extern\glew\include;$(SolutionDir)indigo\extern\imgui;$(SolutionDir)indigo\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GLEW_STATIC;IMGUI_IMPL_OPENGL_LOADER_GLEW</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)indigo\extern\glew\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ProjectReference />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)indigo\include;$(SolutionDir)indigo\extern\glew\include;$(SolutionDir)indigo\extern\imgui;$(SolutionDir)indigo\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GLEW_STATIC;IMGUI_IMPL_OPENGL_LOADER_GLEW</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)indigo\extern\glew\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ProjectReference />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)indigo\include;$(SolutionDir)indigo\extern\glew\include;$(SolutionDir)indigo\extern\imgui;$(SolutionDir)indigo\extern\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GLEW_STATIC;IMGUI_IMPL_OPENGL_LOADER_GLEW</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)indigo\extern\glew\lib\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ProjectReference />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Cubemap.cpp" />
+    <ClCompile Include="extern\imgui\imgui\imgui.cpp" />
+    <ClCompile Include="extern\imgui\imgui\imgui_demo.cpp" />
+    <ClCompile Include="extern\imgui\imgui\imgui_draw.cpp" />
+    <ClCompile Include="extern\imgui\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="extern\imgui\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="extern\imgui\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\FrameBuffer.cpp" />
+    <ClCompile Include="src\Light.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\ErrorHandler.cpp" />
+    <ClCompile Include="src\ShaderProgram.cpp" />
+    <ClCompile Include="src\main.cpp">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="src\File.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Cubemap.h" />
+    <ClInclude Include="extern\imgui\imgui\imconfig.h" />
+    <ClInclude Include="extern\imgui\imgui\imgui.h" />
+    <ClInclude Include="extern\imgui\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="extern\imgui\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="extern\imgui\imgui\imgui_internal.h" />
+    <ClInclude Include="extern\imgui\imgui\imstb_rectpack.h" />
+    <ClInclude Include="extern\imgui\imgui\imstb_textedit.h" />
+    <ClInclude Include="extern\imgui\imgui\imstb_truetype.h" />
+    <ClInclude Include="extern\stb\stb_image.h" />
+    <ClInclude Include="include\Camera.h" />
+    <ClInclude Include="include\OpenGL.h" />
+    <ClInclude Include="include\Cube.h" />
+    <ClInclude Include="include\FrameBuffer.h" />
+    <ClInclude Include="include\GUI.h" />
+    <ClInclude Include="include\Light.h" />
+    <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\Model.h" />
+    <ClInclude Include="include\Plane.h" />
+    <ClInclude Include="include\Shader.h" />
+    <ClInclude Include="include\Texture.h" />
+    <ClInclude Include="include\ErrorHandler.h" />
+    <ClInclude Include="include\File.h" />
+    <ClInclude Include="include\Renderer.h" />
+    <ClInclude Include="include\ShaderProgram.h" />
+    <ClInclude Include="src\ReadFile.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shaders\exploding.geom" />
+    <None Include="res\shaders\primitive\house.frag">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\primitive\house.vert">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\primitive\house.geom">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\basic\basic.frag" />
+    <None Include="res\shaders\basic\basic.vert" />
+    <None Include="res\shaders\basic\basic.geom" />
+    <None Include="res\shaders\basic\basic.tesc" />
+    <None Include="res\shaders\basic\basic.tese" />
+    <None Include="res\shaders\basic\border.frag" />
+    <None Include="res\shaders\basic\depth-test.frag" />
+    <None Include="res\shaders\basic\fbo.vert" />
+    <None Include="res\shaders\basic\texture.frag" />
+    <None Include="res\shaders\environment\cubemap.frag" />
+    <None Include="res\shaders\environment\cubemap.vert" />
+    <None Include="res\shaders\environment\environment.vert">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\environment\reflection.frag">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\environment\refraction.frag">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\kernels.frag" />
+    <None Include="res\shaders\lighting\combined.frag" />
+    <None Include="res\shaders\lighting\directional.frag" />
+    <None Include="res\shaders\lighting\lamp.frag" />
+    <None Include="res\shaders\lighting\lamp.vert" />
+    <None Include="res\shaders\lighting\light.frag" />
+    <None Include="res\shaders\lighting\light.vert" />
+    <None Include="res\shaders\lighting\point.frag" />
+    <None Include="res\shaders\lighting\spotlight.frag" />
+    <None Include="res\shaders\material\basic.frag" />
+    <None Include="res\shaders\material\maps.frag" />
+    <None Include="res\shaders\material\maps.vert" />
+    <None Include="res\shaders\model\basic.frag" />
+    <None Include="res\shaders\model\basic.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="conanfile.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
