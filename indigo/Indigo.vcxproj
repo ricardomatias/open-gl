@@ -216,6 +216,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\exploding.geom" />
+    <None Include="res\shaders\normals.vert">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\normals.geom" />
     <None Include="res\shaders\primitive\house.frag">
       <SubType>
       </SubType>
@@ -265,6 +270,10 @@
     <None Include="res\shaders\material\maps.vert" />
     <None Include="res\shaders\model\basic.frag" />
     <None Include="res\shaders\model\basic.vert" />
+    <None Include="res\shaders\yellow.frag">
+      <SubType>
+      </SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="conanfile.txt" />

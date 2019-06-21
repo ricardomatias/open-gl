@@ -1,8 +1,11 @@
 #version 450
 
-in vec3 fragPos;
-in vec3 normal;
-in vec2 texCoord;
+in SHADER_BUS
+{
+	vec3 fragPos;
+	vec3 normal;
+	vec2 texCoord;
+} frag_in;
 
 out vec4 fragColor;
 
@@ -28,14 +31,14 @@ uniform vec3 uViewPos;
 
 void main() {
 	vec3 result;
-	vec2 uv = texCoord;
-	vec3 diffTex = texture(material.diffuseTex1, texCoord).rgb;
+	vec2 uv = frag_in.texCoord;
+	vec3 diffTex = texture(material.diffuseTex1, frag_in.texCoord).rgb;
 
 	// ambient
 	vec3 ambient = light.ambient * diffTex;
 
     // diffuse 
-    vec3 norm = normalize(normal);
+    vec3 norm = normalize(frag_in.normal);
 	vec3 lightDir = normalize(-light.direction);
 
 	float diffFactor = max(dot(norm, lightDir), 0.0);
@@ -43,11 +46,11 @@ void main() {
 	vec3 diffuse = light.diffuse * diffFactor * diffTex;
 
 	// specular
-	vec3 viewDir = normalize(uViewPos - fragPos);
+	vec3 viewDir = normalize(uViewPos - frag_in.fragPos);
 	vec3 reflectDir = reflect(-lightDir, norm);  
 	float specFactor = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     
-	vec3 specularMap = texture(material.specularTex1, texCoord).rgb;
+	vec3 specularMap = texture(material.specularTex1, frag_in.texCoord).rgb;
 
 	vec3 specular = light.specular * (specFactor * specularMap);  
 

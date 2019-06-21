@@ -13,15 +13,18 @@ in gl_PerVertex
 } gl_in[];
 
 
-in VS_OUT {
+in SHADER_BUS {
 	vec3 fragPos;
 	vec3 normal;
 	vec2 texCoord;
 } geom_in[];
 
-out vec2 texCoord;
-out vec3 normal;
-out vec3 fragPos;
+out SHADER_BUS
+{
+	vec3 fragPos;
+	vec3 normal;
+	vec2 texCoord;
+} geom_out;
 
 uniform float uTime;
 
@@ -48,9 +51,9 @@ void main()
 	for (int i = 0; i < VERTICES; i++) {
 		gl_Position = explode(gl_in[i].gl_Position, nrm);
 	
-		texCoord = geom_in[i].texCoord;
-		normal = geom_in[i].normal;
-		fragPos = geom_in[i].fragPos;
+		geom_out.texCoord = geom_in[i].texCoord;
+		geom_out.normal = geom_in[i].normal;
+		geom_out.fragPos = geom_in[i].fragPos;
 		
 		EmitVertex();
 	}

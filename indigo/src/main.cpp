@@ -45,7 +45,7 @@ GUI gui{ "#version 450" };
 class Application final : public Renderer
 {
 	std::shared_ptr<ShaderProgram> m_meshShaders;
-	std::shared_ptr<ShaderProgram> m_lightShaders;
+	std::shared_ptr<ShaderProgram> m_normalShaders;
 
 	unsigned int m_cubeVao, m_cubeVbo;
 	unsigned int m_planeVao, m_planeVbo;
@@ -59,7 +59,7 @@ public:
 	Application(const int windowWidth, const int windowHeight, const char* title)
 		: Renderer{windowWidth, windowHeight, title},
 			m_meshShaders(std::make_shared<ShaderProgram>()),
-			m_lightShaders(std::make_shared<ShaderProgram>()),
+			m_normalShaders(std::make_shared<ShaderProgram>()),
 			m_cubeVao(0), m_cubeVbo(0), m_planeVao(0), m_planeVbo(0),
 			m_nanosuit(std::make_shared<Model>()),
 			m_cubemap(std::make_shared<Cubemap>()),
@@ -92,12 +92,19 @@ void Application::setup()
 
 	// SHADERS
 	auto vert = std::make_shared<Shader>(Shader::VERTEX, std::string("res/shaders/model/basic.vert"));
-	auto geom = std::make_shared<Shader>(Shader::GEOMETRY, std::string("res/shaders/exploding.geom"));
 	auto frag = std::make_shared<Shader>(Shader::FRAGMENT, std::string("res/shaders/lighting/directional.frag"));
 
-	std::vector<std::shared_ptr<Shader>> shaders{ std::move(vert), std::move(geom), std::move(frag) };
+	std::vector<std::shared_ptr<Shader>> shaders{ std::move(vert), std::move(frag) };
 
 	m_meshShaders->compileShaders(shaders);
+
+	vert = std::make_shared<Shader>(Shader::VERTEX, std::string("res/shaders/normals.vert"));
+	auto geom = std::make_shared<Shader>(Shader::GEOMETRY, std::string("res/shaders/normals.geom"));
+	frag = std::make_shared<Shader>(Shader::FRAGMENT, std::string("res/shaders/yellow.frag"));
+
+	shaders = std::vector<std::shared_ptr<Shader>>{ std::move(vert), std::move(geom), std::move(frag) };
+
+	m_normalShaders->compileShaders(shaders);
 
 	/** nanosuit **/
 	std::error_code ec;
@@ -130,8 +137,7 @@ void Application::draw()
 	/** MATRICES **/
 	glm::mat4 view{ cam.getViewMatrix() };
 
-	glm::mat4 proj = glm::perspective(glm::radians(fov), SCR_WIDTH / static_cast<float>(SCR_HEIGHT), 0.1f, 100.f);
-
+	glm::mat4 proj = glm::perspective(glm::radians(fov), SCR_WIDTH / static_cast<float>(SCR_HEIGHT), .1f, 100.f);
 
 	/** NANOSUIT DRAW **/
 	m_meshShaders->bind();
@@ -142,7 +148,8 @@ void Application::draw()
 	m_meshShaders->setUniformMat4("uView", view);
 
 	glm::mat4 model(glm::mat4(1.f));
-	model = glm::scale(model, glm::vec3(0.1f));
+	model = glm::translate(model, glm::vec3(0.f, 0.f, -2.f));
+	model = glm::scale(model, glm::vec3(0.3f));
 
 	glm::mat3 normalMatrix{ glm::transpose(glm::inverse(model)) };
 
@@ -159,6 +166,18 @@ void Application::draw()
 	m_meshShaders->setUniformf("material.shininess", 32.f);
 
 	m_nanosuit->Draw(m_meshShaders);
+
+	/** NORMALS DRAW **/
+	m_normalShaders->bind();
+
+	normalMatrix = glm::mat3{ glm::transpose(glm::inverse(view * model)) };
+
+	m_normalShaders->setUniformMat4("uProj", proj);
+	m_normalShaders->setUniformMat4("uView", view);
+	m_normalShaders->setUniformMat4("uModel", model);
+	m_normalShaders->setUniformMat3("uNormalMatrix", normalMatrix);
+
+	m_nanosuit->Draw(m_normalShaders);
 }
 
 int main()
