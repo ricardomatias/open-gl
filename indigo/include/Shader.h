@@ -4,6 +4,7 @@
 #include <iostream>
 #include "File.h"
 
+
 enum class ShaderTypes
 {
 	VERTEX,
@@ -13,9 +14,8 @@ enum class ShaderTypes
 	FRAGMENT,
 };
 
-struct Shader
+class Shader
 {
-private:
 	GLuint m_id;
 	ShaderTypes m_type;
 	std::string m_path;
@@ -66,10 +66,5 @@ public:
 	std::string getSource() const { return m_src; };
 	std::string getName() const { return m_name; };
 	int getGLType() const { return m_glType; };
-
-	static const ShaderTypes VERTEX = ShaderTypes::VERTEX;
-	static const ShaderTypes TESS_CTRL = ShaderTypes::TESS_CTRL;
-	static const ShaderTypes TESS_EVAL = ShaderTypes::TESS_EVAL;
-	static const ShaderTypes GEOMETRY = ShaderTypes::GEOMETRY;
-	static const ShaderTypes FRAGMENT = ShaderTypes::FRAGMENT;
 };
+

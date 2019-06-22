@@ -19,10 +19,10 @@ static const std::vector<std::string> faces
 Cubemap::Cubemap()
 	: m_id(0), m_vbo(0), m_shaderProgram(std::make_shared<ShaderProgram>())
 {
-	auto vert = std::make_shared<Shader>(Shader::VERTEX, std::string("res/shaders/environment/cubemap.vert"));
-	auto frag = std::make_shared<Shader>(Shader::FRAGMENT, std::string("res/shaders/environment/cubemap.frag"));
-
-	auto shaders = std::vector<std::shared_ptr<Shader>>{std::move(vert), std::move(frag)};
+	std::unordered_map<ShaderTypes, std::string> shaders = {
+		{ShaderTypes::VERTEX, "res/shaders/environment/cubemap.vert"},
+		{ShaderTypes::FRAGMENT, "res/shaders/environment/cubemap.frag"}
+	};
 
 	m_shaderProgram->compileShaders(shaders);
 

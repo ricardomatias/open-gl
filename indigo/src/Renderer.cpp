@@ -35,7 +35,7 @@ Renderer::Renderer(int winWidth, int winHeight, const char* title)
 	/* Make the window's context current */
 	glfwMakeContextCurrent(m_window);
 
-	glfwSwapInterval(1); // V-SYNC
+	//glfwSwapInterval(1); // V-SYNC
 
 	GLenum err = glewInit();
 

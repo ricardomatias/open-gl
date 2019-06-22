@@ -18,11 +18,16 @@ struct Vertex
 
 class Mesh
 {
+/*  Render data  */
+GLuint VAO, VBO, EBO;
+
 public:
 	/*  Mesh Data  */
 	std::vector<Vertex> m_vertices;
 	std::vector<GLuint> m_indices;
 	std::vector<TexturePointer> m_textures;
+
+	GLuint getVAO() const { return VAO; };
 
 	/*  Functions  */
 	Mesh(std::vector<Vertex> &vertices, std::vector<GLuint> &indices, std::vector<TexturePointer> &textures);
@@ -35,9 +40,5 @@ public:
 	};
 
 	void Draw(std::shared_ptr<ShaderProgram> &shader);
-
-private:
-	/*  Render data  */
-	GLuint VAO, VBO, EBO;
 };
 

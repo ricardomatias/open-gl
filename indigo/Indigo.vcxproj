@@ -216,6 +216,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\exploding.geom" />
+    <None Include="res\shaders\instance.vert" />
     <None Include="res\shaders\normals.vert">
       <SubType>
       </SubType>

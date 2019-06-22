@@ -43,6 +43,8 @@ public:
 
 	glm::mat4 getViewMatrix();
 
+	void keyboardListen(GLFWwindow* window, double deltaTime);
+
 	glm::vec3 getPosition() const { return m_position; };
 	glm::vec3 getFront() const { return m_front; };
 	glm::vec3 getLookAt() const { return m_position + m_front; };

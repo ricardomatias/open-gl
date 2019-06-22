@@ -4,15 +4,19 @@
 #include <iostream>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <unordered_map>
 
-GLuint ShaderProgram::GetStatus(GLuint id, Status type, GLint statusType, const std::string &errorType, const std::string &errorMsg) {
+
+GLuint ShaderProgram::GetStatus(GLuint id, Status type, GLint statusType, const std::string& errorType,
+                                const std::string& errorMsg)
+{
 	GLint success = 0;
 
 	if (type == Status::SHADER)
 	{
 		GL(glGetShaderiv(id, statusType, &success)); // get the compilation result: 1 passed, 0 failed
 	}
-	
+
 	if (type == Status::PROGRAM)
 	{
 		GL(glGetProgramiv(id, statusType, &success)); // get the compilation result: 1 passed, 0 failed
@@ -45,9 +49,9 @@ GLuint ShaderProgram::GetStatus(GLuint id, Status type, GLint statusType, const 
 	return GL_TRUE;
 }
 
-void ShaderProgram::compileShader(ShaderPointer&shader) {
-
-	GLuint id = 0;
+void ShaderProgram::compileShader(ShaderPointer& shader)
+{
+	GLuint id;
 	const std::string src = shader->getSource();
 
 	const char* cSrc = src.c_str();
@@ -64,20 +68,32 @@ void ShaderProgram::compileShader(ShaderPointer&shader) {
 	shader->setID(id);
 }
 
-void ShaderProgram::compileShaders(std::vector<ShaderPointer> &shaders)
+void ShaderProgram::createShaders(const std::unordered_map<ShaderTypes, std::string>& shadersConf)
 {
+	for (const auto& shaderIter : shadersConf)
+	{
+		auto shader = std::make_shared<Shader>(shaderIter.first, shaderIter.second);
+
+		m_shaders.emplace_back(std::move(shader));
+	}
+}
+
+void ShaderProgram::compileShaders(std::unordered_map<ShaderTypes, std::string>& shadersConf)
+{
+	createShaders(shadersConf);
+
 	const GLuint program = glCreateProgram();
 
-	for (auto shaderIter = shaders.begin(); shaderIter != shaders.end(); ++shaderIter)
+	for (auto& shaderIter : m_shaders)
 	{
-		ShaderPointer& shader = *shaderIter;
+		ShaderPointer& shader = shaderIter;
 
-		compileShader(*shaderIter);
+		compileShader(shaderIter);
 
 		GL(glAttachShader(program, shader->ID()));
 	}
 
-	m_shaders.insert(m_shaders.end(), shaders.begin(), shaders.end());
+	m_shaders.insert(m_shaders.end(), m_shaders.begin(), m_shaders.end());
 
 	GL(glLinkProgram(program));
 
@@ -86,9 +102,9 @@ void ShaderProgram::compileShaders(std::vector<ShaderPointer> &shaders)
 		return; // not the best way to do it
 	}
 
-	for (auto shader = m_shaders.cbegin(); shader != m_shaders.cend(); shader++)
+	for (const auto& shader : m_shaders)
 	{
-		GL(glDeleteShader((*shader)->ID()));
+		GL(glDeleteShader(shader->ID()));
 	}
 
 	m_id = program;
@@ -105,7 +121,8 @@ void ShaderProgram::unbind() const
 	GL(glDeleteProgram(m_id));
 }
 
-void ShaderProgram::setUniformMat4(const std::string &name, glm::mat4 &matrix) const {
+void ShaderProgram::setUniformMat4(const std::string& name, glm::mat4& matrix) const
+{
 	GLint location;
 
 	GL((location = glGetUniformLocation(m_id, name.c_str())));
@@ -113,7 +130,8 @@ void ShaderProgram::setUniformMat4(const std::string &name, glm::mat4 &matrix) c
 	GL(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix)));
 }
 
-void ShaderProgram::setUniformMat3(const std::string &name, glm::mat3 &matrix) const {
+void ShaderProgram::setUniformMat3(const std::string& name, glm::mat3& matrix) const
+{
 	GLint location;
 
 	GL((location = glGetUniformLocation(m_id, name.c_str())));
@@ -139,7 +157,7 @@ void ShaderProgram::setUniformi(const std::string& name, int value) const
 	GL(glUniform1i(location, value));
 }
 
-void ShaderProgram::setUniformVec3(const std::string& name, const glm::vec3 &vector) const
+void ShaderProgram::setUniformVec3(const std::string& name, const glm::vec3& vector) const
 {
 	GLint location;
 
@@ -165,4 +183,3 @@ void ShaderProgram::setUniformVec3(const std::string& name, float x, float y, fl
 
 	GL(glUniform3f(location, x, y, z));
 }
-

@@ -84,3 +84,25 @@ glm::mat4 Camera::getViewMatrix()
 {
 	return glm::lookAt(getPosition(), getLookAt(), WORLD_UP);
 }
+
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// ---------------------------------------------------------------------------------------------------------
+void Camera::keyboardListen(GLFWwindow* window, const double deltaTime)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		this->move(CameraDirection::FORWARD, static_cast<float>(deltaTime));
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		this->move(CameraDirection::BACKWARD, static_cast<float>(deltaTime));
+
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		this->move(CameraDirection::UP, static_cast<float>(deltaTime));
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		this->move(CameraDirection::DOWN, static_cast<float>(deltaTime));
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		this->strafe(CameraDirection::LEFT, static_cast<float>(deltaTime));
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		this->strafe(CameraDirection::RIGHT, static_cast<float>(deltaTime));
+}

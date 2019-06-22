@@ -251,6 +251,7 @@
     <None Include="res\shaders\normals.geom" />
     <None Include="res\shaders\yellow.frag" />
     <None Include="res\shaders\normals.vert" />
+    <None Include="res\shaders\instance.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="conanfile.txt">

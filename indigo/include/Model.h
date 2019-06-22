@@ -31,6 +31,8 @@ public:
 		: m_directory(""), m_meshes(std::vector<std::shared_ptr<Mesh>>()), m_loadedTextures(std::vector<TexturePointer>()) {};
 	~Model() { std::cout << "[Model] destroyed" << std::endl; }
 
+	std::vector<std::shared_ptr<Mesh>> getMeshes() const { return m_meshes; };
+
 	void loadModel(const std::string& path);
 
 	void Draw(std::shared_ptr<ShaderProgram> &shader);

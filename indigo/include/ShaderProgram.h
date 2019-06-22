@@ -8,6 +8,7 @@
 #include "Shader.h"
 
 #include "File.h"
+#include <unordered_map>
 
 typedef std::shared_ptr<Shader> ShaderPointer;
 
@@ -24,9 +25,10 @@ class ShaderProgram
 	std::vector<ShaderPointer> m_shaders;
 
 	void compileShader(ShaderPointer& shader);
+	void createShaders(const std::unordered_map<ShaderTypes, std::string>& shadersConf);
 public:
 	ShaderProgram()
-		: m_id(0), m_shaders(std::vector<ShaderPointer>()) {};
+		: m_id(0) {};
 	~ShaderProgram() {
 		unbind();
 
@@ -37,7 +39,7 @@ public:
 
 	unsigned int ID() const { return m_id; };
 
-	void compileShaders(std::vector<ShaderPointer> &shaders);
+	void compileShaders(std::unordered_map<ShaderTypes, std::string>& shadersConf);
 
 	GLuint GetStatus(GLuint id, Status type, GLint statusType, const std::string& errorType, const std::string& errorMsg);
 
