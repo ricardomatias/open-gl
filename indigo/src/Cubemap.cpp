@@ -1,7 +1,7 @@
 #include <stb/stb_image.h>
 
 #include "Cubemap.h"
-#include "Cube.h"
+#include "Primitive.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "ErrorHandler.h"
@@ -17,7 +17,7 @@ static const std::vector<std::string> faces
 };
 
 Cubemap::Cubemap()
-	: m_id(0), m_vbo(0), m_shaderProgram(std::make_shared<ShaderProgram>())
+	: m_id(0), m_cube(std::make_shared<Primitive>(Primitive::CUBE)), m_shaderProgram(std::make_shared<ShaderProgram>())
 {
 	std::unordered_map<ShaderTypes, std::string> shaders = {
 		{ShaderTypes::VERTEX, "res/shaders/environment/cubemap.vert"},
@@ -34,9 +34,6 @@ Cubemap::Cubemap()
 Cubemap::~Cubemap()
 {
 	unbind();
-
-	glDeleteBuffers(1, &m_vbo);
-	glDeleteVertexArrays(1, &m_vao);
 
 	std::cout << "[Cubemap] destroyed" << std::endl;
 }
@@ -95,31 +92,13 @@ void Cubemap::unbind()
 	GL(glDeleteTextures(1, textures));
 }
 
-void Cubemap::createCube()
-{
-	GL(glGenVertexArrays(1, &m_vao));
-	GL(glBindVertexArray(m_vao));
-
-	GL(glGenBuffers(1, &m_vbo));
-	GL(glBindBuffer(GL_ARRAY_BUFFER, m_vbo));
-	GL(glBufferData(GL_ARRAY_BUFFER, sizeof(CUBE), &CUBE, GL_STATIC_DRAW));
-
-	GL(glEnableVertexAttribArray(0));
-	GL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr));
-
-	GL(glEnableVertexAttribArray(0));
-	GL(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))));
-
-	GL(glBindVertexArray(0));
-}
-
 void Cubemap::draw(glm::mat4 &proj, glm::mat4 camViewMatrix)
 {
 	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 
 	glDepthMask(GL_FALSE);
 
-	glBindVertexArray(m_vao);
+	m_cube->bind();
 
 	m_shaderProgram->bind();
 
@@ -130,7 +109,7 @@ void Cubemap::draw(glm::mat4 &proj, glm::mat4 camViewMatrix)
 	m_shaderProgram->setUniformMat4("uProj", proj);
 	m_shaderProgram->setUniformMat4("uView", view);
 
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	m_cube->draw();
 
 	glDepthMask(GL_TRUE);
 

@@ -191,6 +191,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\DepthMap.cpp" />
+    <ClCompile Include="src\Primitive.cpp" />
     <ClCompile Include="src\Cubemap.cpp" />
     <ClCompile Include="extern\imgui\imgui\imgui.cpp" />
     <ClCompile Include="extern\imgui\imgui\imgui_demo.cpp" />
@@ -226,7 +228,7 @@
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\Indigo\Indigo.h" />
     <ClInclude Include="include\OpenGL.h" />
-    <ClInclude Include="include\Cube.h" />
+    <ClInclude Include="include\Primitive.h" />
     <ClInclude Include="include\FrameBuffer.h" />
     <ClInclude Include="include\GUI.h" />
     <ClInclude Include="include\Light.h" />
@@ -239,9 +241,25 @@
     <ClInclude Include="include\File.h" />
     <ClInclude Include="include\Renderer.h" />
     <ClInclude Include="include\ShaderProgram.h" />
+    <ClInclude Include="include\DepthMap.h" />
     <ClInclude Include="src\ReadFile.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\shaders\basic\depth-map.frag">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\basic\depth-map.vert" />
+    <None Include="res\shaders\basic\empty.frag">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\basic\quad.vert" />
+    <None Include="res\shaders\basic\shadow-map.frag">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\basic\shadow-map.vert" />
     <None Include="res\shaders\exploding.geom" />
     <None Include="res\shaders\instance.vert" />
     <None Include="res\shaders\normals.vert">

@@ -12,6 +12,7 @@ class FrameBuffer
 	int m_height;
 	GLuint m_vao;
 	GLuint m_vbo;
+	GLuint m_depthMap;
 public:
 	FrameBuffer(int width, int height);
 	~FrameBuffer();
@@ -19,8 +20,9 @@ public:
 	void drawFrame();
 
 	static bool isComplete();
-	
+
 	void bind() const;
+	
 	void unbind() const;
 	void destroy() const;
 	

@@ -5,12 +5,12 @@
 #include "OpenGL.h"
 #include "ShaderProgram.h"
 #include "Camera.h"
+#include "Primitive.h"
 
 class Cubemap
 {
 	GLuint m_id;
-	GLuint m_vao;
-	GLuint m_vbo;
+	std::shared_ptr<Primitive> m_cube;
 	std::shared_ptr<ShaderProgram> m_shaderProgram;
 public:
 	Cubemap();

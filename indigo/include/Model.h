@@ -14,7 +14,6 @@
 
 class Model
 {
-private:
 	/*  Model Data  */
 	std::vector<std::shared_ptr<Mesh>> m_meshes;
 	std::string m_directory;
@@ -27,8 +26,7 @@ private:
 
 	std::vector<TexturePointer> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 public:
-	Model()
-		: m_directory(""), m_meshes(std::vector<std::shared_ptr<Mesh>>()), m_loadedTextures(std::vector<TexturePointer>()) {};
+	Model() {};
 	~Model() { std::cout << "[Model] destroyed" << std::endl; }
 
 	std::vector<std::shared_ptr<Mesh>> getMeshes() const { return m_meshes; };

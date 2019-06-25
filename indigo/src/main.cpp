@@ -3,6 +3,7 @@
 #include <vector>
 #include <chrono>
 #include <filesystem>
+#include <unordered_map>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,9 +17,9 @@
 #include "GUI.h"
 #include "ErrorHandler.h"
 #include "Model.h"
-#include <unordered_map>
-
-namespace fs = std::filesystem;
+#include "Primitive.h"
+#include "FrameBuffer.h"
+#include "DepthMap.h"
 
 // settings
 const unsigned int SCR_WIDTH = 1600;
@@ -36,36 +37,35 @@ static float fov = 45.f;
 
 static bool firstMouse = true;
 
-Camera cam{ glm::vec3(-5.f, 1.f, 40.f), glm::vec3(0.f), 15.f };
+Camera cam{ glm::vec3(0.f, 1.f, 3.f), glm::vec3(0.f), 5.f };
 GUI gui{ "#version 450" };
-
-glm::vec3 translation = glm::vec3(0.1f);
 
 class Application final : public Renderer
 {
-	std::shared_ptr<ShaderProgram> m_asteroidShader;
-	std::shared_ptr<ShaderProgram> m_planetShader;
+	std::vector<std::shared_ptr<Primitive>> m_primitives;
+	std::shared_ptr<ShaderProgram> m_cubeShaders;
+	std::shared_ptr<ShaderProgram> m_depthMapShaders;
+	std::shared_ptr<ShaderProgram> m_quadShaders;
+	std::shared_ptr<ShaderProgram> m_shadowMapShaders;
 
-	std::shared_ptr<Model> m_planet;
-	std::shared_ptr<Model> m_asteroid;
-	glm::mat4* m_modelMatrices;
-	unsigned int m_asteroidNr;
-	GLuint m_asteroidModelBuffer;
+	std::shared_ptr<Texture> m_cubeTexture;
+	std::shared_ptr<Primitive> m_cube;
+	std::shared_ptr<DepthMap> m_depthMap;
+	glm::mat4 m_lightSpaceMatrix;
 public:
 	Application(const int windowWidth, const int windowHeight, const char* title)
 		: Renderer{windowWidth, windowHeight, title},
-			m_asteroidShader(std::make_shared<ShaderProgram>()),
-			m_planetShader(std::make_shared<ShaderProgram>()),
-			m_planet(std::make_shared<Model>()),
-			m_asteroid(std::make_shared<Model>()),
-			m_modelMatrices(nullptr),
-			m_asteroidNr(0),
-			deltaTime(0), currentFrame(0), lastFrame(0)
+			m_cubeShaders(std::make_shared<ShaderProgram>()),
+			m_depthMapShaders(std::make_shared<ShaderProgram>()),
+			m_quadShaders(std::make_shared<ShaderProgram>()),
+			m_shadowMapShaders(std::make_shared<ShaderProgram>()),
+			deltaTime(0), currentFrame(0), lastFrame(0), m_lightSpaceMatrix(glm::mat4(1.f))
 	{};
 	virtual ~Application();
 
 	virtual void setup();
 	virtual void draw();
+	void renderScene(std::shared_ptr<ShaderProgram>& shader);
 
 	double deltaTime;
 	double currentFrame, lastFrame;
@@ -74,8 +74,6 @@ public:
 Application::~Application()
 {
 	//gui.destroy();
-	delete m_modelMatrices;
-
 	LOG("[Application] destroyed");
 }
 
@@ -90,95 +88,104 @@ void Application::setup()
 		{ShaderTypes::FRAGMENT, "res/shaders/lighting/directional.frag"}
 	};
 	
-	m_planetShader->compileShaders(shaders);
+	m_cubeShaders->compileShaders(shaders);
+
+	m_cubeShaders->bind();
 
 	shaders = {
-		{ShaderTypes::VERTEX, "res/shaders/instance.vert"},
-		{ShaderTypes::FRAGMENT, "res/shaders/lighting/directional.frag"}
+		{ShaderTypes::VERTEX, "res/shaders/basic/depth-map.vert"},
+		{ShaderTypes::FRAGMENT, "res/shaders/basic/empty.frag"}
+	};
+	
+	m_depthMapShaders->compileShaders(shaders);
+
+	m_depthMapShaders->bind();
+
+	shaders = {
+		{ShaderTypes::VERTEX, "res/shaders/basic/quad.vert"},
+		{ShaderTypes::FRAGMENT, "res/shaders/basic/depth-map.frag"}
 	};
 
-	m_asteroidShader->compileShaders(shaders);
-	
-	/** nanosuit **/
-	std::error_code ec;
+	m_quadShaders->compileShaders(shaders);
 
-	m_planet->loadModel(fs::absolute(fs::path("res/models/planet/planet.obj"), ec).generic_string());
 
-	m_asteroid->loadModel(fs::absolute(fs::path("res/models/rock/rock.obj"), ec).generic_string());
+	m_quadShaders->bind();
+
+	m_quadShaders->setUniformi("depthMap", 0);
+
+	shaders = {
+		{ShaderTypes::VERTEX, "res/shaders/basic/shadow-map.vert"},
+		{ShaderTypes::FRAGMENT, "res/shaders/basic/shadow-map.frag"}
+	};
+
+	m_shadowMapShaders->compileShaders(shaders);
+
+	/** CUBES **/
+	m_primitives.emplace_back(std::make_shared<Primitive>(
+		Primitive::PLANE,
+		glm::vec3(0.f),
+		glm::vec3(1.f),
+		0.f,
+		glm::vec3(2.f)
+	));
+
+	m_primitives.emplace_back(std::make_shared<Primitive>(
+		Primitive::CUBE,
+		glm::vec3(2.0f, 0.0f, 1.0f),
+		glm::vec3(1.f),
+		0.f,
+		glm::vec3(0.5f)
+	));
+
+	m_primitives.emplace_back(std::make_shared<Primitive>(
+		Primitive::CUBE,
+		glm::vec3(0.0f, 1.5f, 0.0f),
+		glm::vec3(1.f),
+		0.f,
+		glm::vec3(0.5f)
+	));
+
+	m_primitives.emplace_back(std::make_shared<Primitive>(
+		Primitive::CUBE,
+		glm::vec3(-1.0f, 0.0f, 2.0f),
+		glm::vec3(1.0f, 0.0f, 1.0f),
+		60.f,
+		glm::vec3(0.25f)
+	));
+
 
 	/** UNIFORMS **/
-	m_asteroidNr = 1000;
+	m_cubeTexture = std::make_shared<Texture>("res/images/wood.png", GL_TEXTURE0);
 
-	m_modelMatrices = new glm::mat4[m_asteroidNr];
+	m_cubeTexture->load();
 
-	srand(glfwGetTime()); // initialize random seed	
+	m_cubeShaders->bind();
 
-	float radius = 75.0;
-	float offset = 20.f;
+	m_cubeShaders->setUniformi("material.diffuseTex1", 0);
 
-	for (unsigned int i = 0; i < m_asteroidNr; i++)
-	{
-		glm::mat4 model = glm::mat4(1.0f);
-		// 1. translation: displace along circle with 'radius' in range [-offset, offset]
-		float angle = static_cast<float>(i) / m_asteroidNr * 360.0f;
-		float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+	m_shadowMapShaders->bind();
 
-		float x = sin(angle) * radius + displacement;
-		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-		
-		float y = displacement * 0.2f; // keep height of field smaller compared to width of x and z
-		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-		
-		float z = cos(angle) * radius + displacement;
-		model = glm::translate(model, glm::vec3(x, y, z));
+	m_shadowMapShaders->setUniformi("material.diffuseTex1", 0);
+	m_shadowMapShaders->setUniformi("shadowMap", 1);
 
-		// 2. scale: Scale between 0.05 and 0.25f
-		float scale = (rand() % 20) / 100.0f + 0.05;
-		model = glm::scale(model, glm::vec3(scale));
+	/** UNIFORMS **/
+	const int SHADOW_WIDTH = 1024;
+	const int SHADOW_HEIGHT = 1024;
 
-		// 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
-		float rotAngle = (rand() % 360);
-		model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+	m_depthMap = std::make_shared<DepthMap>(SHADOW_WIDTH, SHADOW_HEIGHT);
 
-		// 4. now add to list of matrices
-		m_modelMatrices[i] = model;
-	}
+	float near_plane = 1.0f, far_plane = 7.5f;
 
-	glGenBuffers(1, &m_asteroidModelBuffer);
+	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_asteroidModelBuffer);
-	glBufferStorage(GL_ARRAY_BUFFER, m_asteroidNr * sizeof(glm::mat4), nullptr, GL_DYNAMIC_STORAGE_BIT);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, m_asteroidNr * sizeof(glm::mat4), &m_modelMatrices[0]);
+	glm::mat4 lightView = glm::lookAt(
+		glm::vec3(-2.0f, 4.0f, -1.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
 
-	auto asteroids = m_asteroid->getMeshes();
+	m_lightSpaceMatrix = lightProjection * lightView;
 
-	for (auto &mesh : asteroids)
-	{
-		GLuint vao = mesh->getVAO();
-
-		glBindVertexArray(vao);
-
-		GLsizei vec4Size = sizeof(glm::vec4); // mat4 = 4 x vec4
-
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, reinterpret_cast<void*>(vec4Size * 0));
-		glVertexAttribDivisor(3, 1);
-
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, reinterpret_cast<void*>(vec4Size * 1));
-		glVertexAttribDivisor(4, 1);
-
-		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, reinterpret_cast<void*>(vec4Size * 2));
-		glVertexAttribDivisor(5, 1);
-
-		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, reinterpret_cast<void*>(vec4Size * 3));
-		glVertexAttribDivisor(6, 1);
-
-		glBindVertexArray(0);
-	}
-	
 	// draw as wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -200,80 +207,66 @@ void Application::draw()
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	/** MATRICES **/
+	/** RENDER SCENE -> DEPTH MAP **/
+
+		/** MATRICES **/
 	glm::mat4 view{ cam.getViewMatrix() };
-	glm::mat4 proj = glm::perspective(glm::radians(fov), SCR_WIDTH / static_cast<float>(SCR_HEIGHT), .1f, 300.f);
+	glm::mat4 proj = glm::perspective(glm::radians(fov), SCR_WIDTH / static_cast<float>(SCR_HEIGHT), .1f, 100.f);
 
 	/** PLANET DRAW **/
-	m_planetShader->bind();
+	m_depthMapShaders->bind();
 
-	m_planetShader->setUniformMat4("uProj", proj);
-	m_planetShader->setUniformMat4("uView", view);
+	m_depthMapShaders->setUniformMat4("uLightSpace", m_lightSpaceMatrix);
 
-	float rotAngle = 10.f * static_cast<float>(currentFrame);
+	m_depthMap->prepCapture();
 
-	glm::mat4 model(glm::mat4(1.f));
-	model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(rotAngle), glm::vec3(0.f, 1.f, 0.f));
-	model = glm::rotate(model, glm::radians(-45.f), glm::vec3(0.f, 0.f, 1.f));
-	model = glm::scale(model, glm::vec3(4.0f));
+	renderScene(m_depthMapShaders);
 
-	glm::mat3 normalMatrix{ glm::transpose(glm::inverse(model)) };
+	m_depthMap->unbind();
 
-	m_planetShader->setUniformMat4("uModel", model);
-	m_planetShader->setUniformMat3("uNormalMatrix", normalMatrix);
+	/** RENDER SCENE -> SHADOW MAPPING **/
+	 // reset viewport
+	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	m_planetShader->setUniformVec3("light.direction", glm::vec3(-.2f, -10.f, -2.5f));
-	m_planetShader->setUniformVec3("light.ambient", glm::vec3(.2f));
-	m_planetShader->setUniformVec3("light.diffuse", glm::vec3(.9f));
-	m_planetShader->setUniformVec3("light.specular", glm::vec3(.7f));
+	m_shadowMapShaders->bind();
 
-	m_planetShader->setUniformVec3("uViewPos", cam.getPosition());
+	m_cubeTexture->bind();
+	m_depthMap->bindDepthMap(GL_TEXTURE1);
 
-	m_planetShader->setUniformf("material.shininess", 32.f);
+	m_shadowMapShaders->setUniformMat4("uProj", proj);
+	m_shadowMapShaders->setUniformMat4("uView", view);
+	m_shadowMapShaders->setUniformMat4("uLightSpace", m_lightSpaceMatrix);
 
-	m_planet->Draw(m_planetShader);
+	m_shadowMapShaders->setUniformVec3("light.position", glm::vec3(-2.0f, 4.0f, -1.0f));
+	m_shadowMapShaders->setUniformVec3("light.ambient", glm::vec3(.3f));
+	m_shadowMapShaders->setUniformVec3("light.diffuse", glm::vec3(1.f));
+	m_shadowMapShaders->setUniformVec3("light.specular", glm::vec3(.1f));
 
-	/** ASTEROIDS DRAW **/
-	m_asteroidShader->bind();
+	m_shadowMapShaders->setUniformVec3("uViewPos", cam.getPosition());
 
-	m_asteroidShader->setUniformMat4("uProj", proj);
-	m_asteroidShader->setUniformMat4("uView", view);
+	m_shadowMapShaders->setUniformf("material.shininess", 64.f);
 
-	m_asteroidShader->setUniformVec3("light.direction", glm::vec3(-.2f, -1.f, -2.5f));
-	m_asteroidShader->setUniformVec3("light.ambient", glm::vec3(.2f));
-	m_asteroidShader->setUniformVec3("light.diffuse", glm::vec3(.9f));
-	m_asteroidShader->setUniformVec3("light.specular", glm::vec3(.7f));
+	renderScene(m_shadowMapShaders);
+}
 
-	m_asteroidShader->setUniformVec3("uViewPos", cam.getPosition());
-
-	m_asteroidShader->setUniformf("material.shininess", 32.f);
-
-	auto asteroids = m_asteroid->getMeshes();
-
-	translation += glm::vec3(50.5f);
-
-	for (size_t i = 0; i < asteroids.size(); ++i)
+void Application::renderScene(std::shared_ptr<ShaderProgram> &shader)
+{
+	for (auto& primitive : m_primitives)
 	{
-		auto &asteroid = asteroids[i];
+		glm::mat4 model(glm::mat4(1.f));
+		model = glm::translate(model, primitive->position);
+		model = glm::rotate(model, glm::radians(primitive->rotAngle), primitive->rotVec);
+		model = glm::scale(model, primitive->scale);
 
-		GLsizei vec4size = sizeof(glm::vec4);
+		glm::mat3 normalMatrix{ glm::transpose(glm::inverse(model)) };
 
-		glBindVertexArray(asteroid->getVAO());
+		shader->setUniformMat4("uModel", model);
+		shader->setUniformMat3("uNormalMatrix", normalMatrix);
 
-		glDrawElementsInstanced(GL_TRIANGLES, asteroid->m_indices.size(), GL_UNSIGNED_INT, nullptr, m_asteroidNr);
-
-		glBindVertexArray(0);
+		primitive->draw();
 	}
-
-	for (size_t i = 0; i < m_asteroidNr; ++i)
-	{
-		m_modelMatrices[i] = glm::rotate(m_modelMatrices[i], glm::radians(static_cast<float>(deltaTime)) * 100.f, glm::vec3(0.4f, 0.6f, 0.8f));
-	}
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_asteroidModelBuffer);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, m_asteroidNr * sizeof(glm::mat4), nullptr);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, m_asteroidNr * sizeof(glm::mat4), &m_modelMatrices[0]);
 }
 
 int main()

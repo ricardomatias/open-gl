@@ -21,6 +21,8 @@ Renderer::Renderer(int winWidth, int winHeight, const char* title)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
+	glfwWindowHint(GLFW_SAMPLES, 4); // ANTI-ALIASING
+
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	/* Create a windowed mode window and its OpenGL context */
@@ -58,6 +60,8 @@ Renderer::Renderer(int winWidth, int winHeight, const char* title)
 	{
 		glDebugMessageCallback(glDebugCallback, NULL);
 	}
+
+	glEnable(GL_MULTISAMPLE);
 }
 
 Renderer::~Renderer()

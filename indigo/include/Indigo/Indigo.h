@@ -10,7 +10,7 @@
 #include "../Light.h"
 #include "../Mesh.h"
 #include "../Model.h"
-#include "../Cube.h"
+#include "../Primitive.h"
 #include "../Plane.h"
 #include "../Texture.h"
 #include "../FrameBuffer.h"

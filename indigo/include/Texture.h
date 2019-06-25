@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <utility>
 
 #include "OpenGL.h"
 
@@ -16,17 +17,16 @@ enum class TextureType
 
 class Texture
 {
-private:
 	GLuint m_id;
 	std::string m_path;
 	std::string m_type;
 	GLenum m_texSlot;
 public:
-	Texture(const std::string& imgPath, const std::string& type)
-		: m_id(0), m_path(imgPath), m_type(type), m_texSlot(GL_TEXTURE0) {};
+	Texture(std::string imgPath, std::string type)
+		: m_id(0), m_path(std::move(imgPath)), m_type(std::move(type)), m_texSlot(GL_TEXTURE0) {};
 	
-	Texture(const std::string& imgPath, const GLenum texSlot)
-		: m_id(0), m_path(imgPath), m_type(DEFAULT), m_texSlot(texSlot) {};
+	Texture(std::string imgPath, const GLenum texSlot)
+		: m_id(0), m_path(std::move(imgPath)), m_type(DEFAULT), m_texSlot(texSlot) {};
 
 	~Texture() {
 		unbind();

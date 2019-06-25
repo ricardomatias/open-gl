@@ -14,6 +14,8 @@ static const float quadVertices[] = { // vertex attributes for a quad that fills
 		 1.0f,  1.0f,  1.0f, 1.0f
 };
 
+static const GLint SAMPLES = 4;
+
 FrameBuffer::FrameBuffer(int width, int height)
 	: m_texture(0), m_renderBuffer(0), m_width(width), m_height(height), m_vao(0), m_vbo(0)
 {
@@ -80,11 +82,18 @@ bool FrameBuffer::isComplete()
 void FrameBuffer::bind() const
 {
 	GL(glBindFramebuffer(GL_FRAMEBUFFER, m_id));
+	GL(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_id));
+	GL(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+	GL(glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
 }
 
 void FrameBuffer::unbind() const
 {
+	//  A framebuffer object however is not complete without a color buffer
+	// so we need to explicitly tell OpenGL we're not going to render any color data. 
 	GL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	GL(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
+	GL(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
 }
 
 void FrameBuffer::destroy() const
@@ -97,14 +106,14 @@ void FrameBuffer::createTextureAttach()
 	bind();
 
 	GL(glGenTextures(1, &m_texture));
-	GL(glBindTexture(GL_TEXTURE_2D, m_texture));
+	GL(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_texture));
 
-	GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
+	GL(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, SAMPLES, GL_RGB, m_width, m_height, GL_TRUE));
 
-	GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-	GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GL(glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GL(glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
-	GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0));
+	GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, m_texture, 0));
 }
 
 void FrameBuffer::bindTexture()
@@ -126,7 +135,7 @@ void FrameBuffer::createRenderBufferAttach()
 	GL(glGenRenderbuffers(1, &m_renderBuffer));
 	GL(glBindRenderbuffer(GL_RENDERBUFFER, m_renderBuffer));
 
-	GL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_width, m_height));
+	GL(glRenderbufferStorageMultisample(GL_RENDERBUFFER, SAMPLES, GL_DEPTH24_STENCIL8, m_width, m_height));
 	
 	GL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_renderBuffer));
 }

@@ -93,8 +93,6 @@ void ShaderProgram::compileShaders(std::unordered_map<ShaderTypes, std::string>&
 		GL(glAttachShader(program, shader->ID()));
 	}
 
-	m_shaders.insert(m_shaders.end(), m_shaders.begin(), m_shaders.end());
-
 	GL(glLinkProgram(program));
 
 	if (GetStatus(program, Status::PROGRAM, GL_LINK_STATUS, "ShaderProgram", "LINKING FAILURE") != GL_TRUE)
