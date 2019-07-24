@@ -9,7 +9,7 @@
     <Conan-zlib-Root>$(USERPROFILE)\.conan\data\zlib\1.2.11\conan\stable\package\8cf01e2f50fcd6b63525e70584df0326550364e1</Conan-zlib-Root>
     <Conan-IrrXML-Root>$(USERPROFILE)\.conan\data\IrrXML\1.2\conan\stable\package\8cf01e2f50fcd6b63525e70584df0326550364e1</Conan-IrrXML-Root>
   </PropertyGroup>
-  <PropertyGroup Label="ConanVariables">
+    <PropertyGroup Label="ConanVariables">
     <ConanBinaryDirectories>$(USERPROFILE)\.conan\data\glfw\3.3\bincrafters\stable\package\8cf01e2f50fcd6b63525e70584df0326550364e1\bin;;%(ConanBinaryDirectories)</ConanBinaryDirectories>
     <ConanResourceDirectories>;%(ConanResourceDirectories)$(</ConanResourceDirectories>
   </PropertyGroup>
@@ -36,12 +36,6 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
     </ResourceCompile>
-    <Lib>
-      <AdditionalDependencies>assimp-vc140-mt.lib;glfw3.lib;zlib.lib;IrrXMLd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
-    <Lib>
-      <AdditionalLibraryDirectories>$(USERPROFILE)\.conan\data\Assimp\4.1.0\jacmoe\stable\package\3ecb3920510fcf498d2a52333e13403d3bf68020\lib;$(USERPROFILE)\.conan\data\glfw\3.3\bincrafters\stable\package\8cf01e2f50fcd6b63525e70584df0326550364e1\lib;$(USERPROFILE)\.conan\data\zlib\1.2.11\conan\stable\package\8cf01e2f50fcd6b63525e70584df0326550364e1\lib;$(USERPROFILE)\.conan\data\IrrXML\1.2\conan\stable\package\8cf01e2f50fcd6b63525e70584df0326550364e1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

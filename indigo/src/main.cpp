@@ -107,7 +107,7 @@ void Application::setup()
 	m_asteroid->loadModel(fs::absolute(fs::path("res/models/rock/rock.obj"), ec).generic_string());
 
 	/** UNIFORMS **/
-	m_asteroidNr = 10000;
+	m_asteroidNr = 1000;
 
 	m_modelMatrices = new glm::mat4[m_asteroidNr];
 
@@ -126,7 +126,7 @@ void Application::setup()
 		float x = sin(angle) * radius + displacement;
 		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
 		
-		float y = displacement * 0.4f; // keep height of field smaller compared to width of x and z
+		float y = displacement * 0.2f; // keep height of field smaller compared to width of x and z
 		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
 		
 		float z = cos(angle) * radius + displacement;
@@ -268,7 +268,7 @@ void Application::draw()
 
 	for (size_t i = 0; i < m_asteroidNr; ++i)
 	{
-		m_modelMatrices[i] = glm::rotate(m_modelMatrices[i], glm::radians(static_cast<float>(currentFrame) * 2.f), glm::vec3(0.4f, 0.6f, 0.8f));
+		m_modelMatrices[i] = glm::rotate(m_modelMatrices[i], glm::radians(static_cast<float>(deltaTime)) * 100.f, glm::vec3(0.4f, 0.6f, 0.8f));
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_asteroidModelBuffer);
