@@ -12,6 +12,7 @@ enum class TextureType
 	DIFFUSE,
 	SPECULAR,
 	REFLECTION,
+	NORMAL,
 	DEFAULT
 };
 
@@ -48,6 +49,7 @@ public:
 	static const std::string DIFFUSE;
 	static const std::string SPECULAR;
 	static const std::string REFLECTION;
+	static const std::string NORMAL;
 };
 
 typedef std::shared_ptr<Texture> TexturePointer;

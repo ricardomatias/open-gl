@@ -29,6 +29,14 @@ Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<GLuint> &indices, std::vec
 	glEnableVertexAttribArray(2);
 	GL(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, texCoords))));
 
+	// vertex tangent
+	glEnableVertexAttribArray(3);
+	GL(glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, tangent))));
+	
+	// vertex bitangent
+	glEnableVertexAttribArray(4);
+	GL(glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, bitangent))));
+
 	GL(glBindVertexArray(0)); // zero to break the existing vertex array object binding
 }
 
@@ -39,8 +47,9 @@ void Mesh::Draw(std::shared_ptr<ShaderProgram> &shader)
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
 	unsigned int reflectionNr = 1;
+	unsigned int normalNr = 1;
 
-	for (unsigned int i = 0; i < m_textures.size(); i++)
+	for (int i = 0; i < m_textures.size(); i++)
 	{
 		const auto texture = m_textures[i];
 		
@@ -58,6 +67,10 @@ void Mesh::Draw(std::shared_ptr<ShaderProgram> &shader)
 		else if (type == Texture::REFLECTION)
 		{
 			number = std::to_string(reflectionNr++);
+		}
+		else if (type == Texture::NORMAL)
+		{
+			number = std::to_string(normalNr++);
 		}
 
 		std::string uniform = "material." + type + number;

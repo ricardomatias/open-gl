@@ -6,9 +6,10 @@
 
 
 const std::string Texture::DEFAULT = "texture";
-const std::string Texture::DIFFUSE = "diffuseTex";
-const std::string Texture::SPECULAR = "specularTex";
-const std::string Texture::REFLECTION = "reflectionTex";
+const std::string Texture::DIFFUSE = "diffuseMap";
+const std::string Texture::SPECULAR = "specularMap";
+const std::string Texture::REFLECTION = "reflectionMap";
+const std::string Texture::NORMAL = "normalMap";
 
 void Texture::load(bool gamma)
 {

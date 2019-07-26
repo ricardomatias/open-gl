@@ -1,22 +1,28 @@
 #version 450
 
-in vec3 fragPos;
-in vec3 normal;
-in vec2 texCoord;
+in SHADER_BUS
+{
+	vec3 fragPos;
+	vec3 normal;
+	vec2 texCoord;
+	vec3 tangentLightDir;
+	vec3 tangentViewDir;
+	vec3 tangentViewPos;
+} frag_in;
 
 out vec4 fragColor;
 
 struct Material {
-	sampler2D diffuseTex1;
-	sampler2D specularTex1;
-	sampler2D reflectionTex1;
+	sampler2D diffuseMap1;
+	sampler2D specularMap1;
+	sampler2D reflectionMap1;
+
+	sampler2D normalMap1;
     float     shininess;
 };
 
 struct Light {
-    vec3 position;
-
-    vec3 ambient;
+	vec3 ambient;
     vec3 diffuse;
     vec3 specular;
 
@@ -28,38 +34,39 @@ struct Light {
 uniform Material material;
 uniform Light light;
 
-uniform vec3 u_viewPos;
-uniform float u_time;
+uniform float uTime;
 
 void main() {
 	vec3 result;
-	vec2 uv = texCoord;
-	vec3 diffTex = texture(material.diffuseTex1, texCoord).rgb;
+	vec3 diffTex = texture(material.diffuseMap1, frag_in.texCoord).rgb;
 
 	// ambient
 	vec3 ambient = light.ambient * diffTex;
 
-    // diffuse 
-    vec3 norm = normalize(normal);
-	vec3 lightDir = normalize(light.position - fragPos);
+    // diffuse
+	vec3 normalTex = texture(material.normalMap1, frag_in.texCoord).rgb;
+    vec3 norm = normalize(normalTex * 2.0 - 1.0);
+//	vec3 norm = normalize(frag_in.normal);
+	vec3 lightDir = normalize(frag_in.tangentLightDir);
 
 	float diffFactor = max(dot(norm, lightDir), 0.0);
 
 	vec3 diffuse = light.diffuse * diffFactor * diffTex;
 
 	// specular
-	vec3 viewDir = normalize(u_viewPos - fragPos);
-	vec3 reflectDir = reflect(-lightDir, norm);  
-	float specFactor = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	vec3 viewDir = normalize(frag_in.tangentViewDir);
+	vec3 halfVec = normalize(lightDir + viewDir);
+
+	float specFactor = pow(max(dot(viewDir, halfVec), 0.0), material.shininess);
     
-	vec3 specularMap = texture(material.specularTex1, texCoord).rgb;
+	vec3 specularMap = texture(material.specularMap1, frag_in.texCoord).rgb;
 
 	vec3 specular = light.specular * (specFactor * specularMap);  
 
-	result += ambient + diffuse + specular;
+	result += ambient + diffuse;
 
 	// attenuation
-	float distance = length(light.position - fragPos);
+	float distance = length(frag_in.tangentViewDir);
 
 	float attenuation = 1.0 / (
 		light.constant +
@@ -67,6 +74,6 @@ void main() {
     	light.quadratic * (distance * distance)
 	);  
 
-    fragColor = vec4(result * attenuation, 1.0);
+    fragColor = vec4(norm, 1.0);
 }
 

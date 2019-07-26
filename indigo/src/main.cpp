@@ -18,8 +18,8 @@
 #include "ErrorHandler.h"
 #include "Model.h"
 #include "Primitive.h"
-#include "FrameBuffer.h"
-#include "DepthMap.h"
+
+namespace fs = std::filesystem;
 
 // settings
 const unsigned int SCR_WIDTH = 1600;
@@ -37,29 +37,23 @@ static float fov = 45.f;
 
 static bool firstMouse = true;
 
-Camera cam{ glm::vec3(0.f, 1.f, 3.f), glm::vec3(0.f), 5.f };
+glm::vec3 modelPosition(0.f, 0.f, -5.f);
+
+Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), modelPosition, 5.f };
 GUI gui{ "#version 450" };
 
 class Application final : public Renderer
 {
 	std::vector<std::shared_ptr<Primitive>> m_primitives;
-	std::shared_ptr<ShaderProgram> m_cubeShaders;
-	std::shared_ptr<ShaderProgram> m_depthMapShaders;
-	std::shared_ptr<ShaderProgram> m_quadShaders;
-	std::shared_ptr<ShaderProgram> m_shadowMapShaders;
+	std::shared_ptr<ShaderProgram> m_modelShaders;
 
-	std::shared_ptr<Texture> m_cubeTexture;
-	std::shared_ptr<Primitive> m_cube;
-	std::shared_ptr<DepthMap> m_depthMap;
-	glm::mat4 m_lightSpaceMatrix;
+	std::shared_ptr<Model> m_nanoSuit;
 public:
 	Application(const int windowWidth, const int windowHeight, const char* title)
 		: Renderer{windowWidth, windowHeight, title},
-			m_cubeShaders(std::make_shared<ShaderProgram>()),
-			m_depthMapShaders(std::make_shared<ShaderProgram>()),
-			m_quadShaders(std::make_shared<ShaderProgram>()),
-			m_shadowMapShaders(std::make_shared<ShaderProgram>()),
-			deltaTime(0), currentFrame(0), lastFrame(0), m_lightSpaceMatrix(glm::mat4(1.f))
+			m_modelShaders(std::make_shared<ShaderProgram>()),
+			m_nanoSuit(std::make_shared<Model>()),
+			deltaTime(0), currentFrame(0), lastFrame(0)
 	{};
 	virtual ~Application();
 
@@ -85,106 +79,21 @@ void Application::setup()
 	// SHADERS
 	std::unordered_map<ShaderTypes, std::string> shaders = {
 		{ShaderTypes::VERTEX, "res/shaders/model/basic.vert"},
-		{ShaderTypes::FRAGMENT, "res/shaders/lighting/directional.frag"}
+		{ShaderTypes::FRAGMENT, "res/shaders/lighting/point.frag"}
 	};
 	
-	m_cubeShaders->compileShaders(shaders);
+	m_modelShaders->compileShaders(shaders);
 
-	m_cubeShaders->bind();
+	m_modelShaders->bind();
 
-	shaders = {
-		{ShaderTypes::VERTEX, "res/shaders/basic/depth-map.vert"},
-		{ShaderTypes::FRAGMENT, "res/shaders/basic/empty.frag"}
-	};
-	
-	m_depthMapShaders->compileShaders(shaders);
+	/** MODEL **/
+	std::error_code ec;
 
-	m_depthMapShaders->bind();
+	fs::path modelPath = fs::absolute(fs::path("res/models/nanosuit/nanosuit.obj"), ec);
 
-	shaders = {
-		{ShaderTypes::VERTEX, "res/shaders/basic/quad.vert"},
-		{ShaderTypes::FRAGMENT, "res/shaders/basic/depth-map.frag"}
-	};
-
-	m_quadShaders->compileShaders(shaders);
-
-
-	m_quadShaders->bind();
-
-	m_quadShaders->setUniformi("depthMap", 0);
-
-	shaders = {
-		{ShaderTypes::VERTEX, "res/shaders/basic/shadow-map.vert"},
-		{ShaderTypes::FRAGMENT, "res/shaders/basic/shadow-map.frag"}
-	};
-
-	m_shadowMapShaders->compileShaders(shaders);
-
-	/** CUBES **/
-	m_primitives.emplace_back(std::make_shared<Primitive>(
-		Primitive::PLANE,
-		glm::vec3(0.f),
-		glm::vec3(1.f),
-		0.f,
-		glm::vec3(2.f)
-	));
-
-	m_primitives.emplace_back(std::make_shared<Primitive>(
-		Primitive::CUBE,
-		glm::vec3(2.0f, 0.0f, 1.0f),
-		glm::vec3(1.f),
-		0.f,
-		glm::vec3(0.5f)
-	));
-
-	m_primitives.emplace_back(std::make_shared<Primitive>(
-		Primitive::CUBE,
-		glm::vec3(0.0f, 1.5f, 0.0f),
-		glm::vec3(1.f),
-		0.f,
-		glm::vec3(0.5f)
-	));
-
-	m_primitives.emplace_back(std::make_shared<Primitive>(
-		Primitive::CUBE,
-		glm::vec3(-1.0f, 0.0f, 2.0f),
-		glm::vec3(1.0f, 0.0f, 1.0f),
-		60.f,
-		glm::vec3(0.25f)
-	));
-
+	m_nanoSuit->loadModel(modelPath.generic_string());
 
 	/** UNIFORMS **/
-	m_cubeTexture = std::make_shared<Texture>("res/images/wood.png", GL_TEXTURE0);
-
-	m_cubeTexture->load();
-
-	m_cubeShaders->bind();
-
-	m_cubeShaders->setUniformi("material.diffuseTex1", 0);
-
-	m_shadowMapShaders->bind();
-
-	m_shadowMapShaders->setUniformi("material.diffuseTex1", 0);
-	m_shadowMapShaders->setUniformi("shadowMap", 1);
-
-	/** UNIFORMS **/
-	const int SHADOW_WIDTH = 1024;
-	const int SHADOW_HEIGHT = 1024;
-
-	m_depthMap = std::make_shared<DepthMap>(SHADOW_WIDTH, SHADOW_HEIGHT);
-
-	float near_plane = 1.0f, far_plane = 7.5f;
-
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-
-	glm::mat4 lightView = glm::lookAt(
-		glm::vec3(-2.0f, 4.0f, -1.0f),
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
-
-	m_lightSpaceMatrix = lightProjection * lightView;
 
 	// draw as wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -207,48 +116,40 @@ void Application::draw()
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	/** RENDER SCENE -> DEPTH MAP **/
-
-		/** MATRICES **/
+	/** MATRICES **/
 	glm::mat4 view{ cam.getViewMatrix() };
 	glm::mat4 proj = glm::perspective(glm::radians(fov), SCR_WIDTH / static_cast<float>(SCR_HEIGHT), .1f, 100.f);
 
-	/** PLANET DRAW **/
-	m_depthMapShaders->bind();
-
-	m_depthMapShaders->setUniformMat4("uLightSpace", m_lightSpaceMatrix);
-
-	m_depthMap->prepCapture();
-
-	renderScene(m_depthMapShaders);
-
-	m_depthMap->unbind();
-
 	/** RENDER SCENE -> SHADOW MAPPING **/
-	 // reset viewport
-	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-	glEnable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	m_modelShaders->bind();
 
-	m_shadowMapShaders->bind();
+	m_modelShaders->setUniformMat4("uProj", proj);
+	m_modelShaders->setUniformMat4("uView", view);
 
-	m_cubeTexture->bind();
-	m_depthMap->bindDepthMap(GL_TEXTURE1);
+	m_modelShaders->setUniformVec3("light.ambient", glm::vec3(.3f));
+	m_modelShaders->setUniformVec3("light.diffuse", glm::vec3(1.f));
+	m_modelShaders->setUniformVec3("light.specular", glm::vec3(.75f));
 
-	m_shadowMapShaders->setUniformMat4("uProj", proj);
-	m_shadowMapShaders->setUniformMat4("uView", view);
-	m_shadowMapShaders->setUniformMat4("uLightSpace", m_lightSpaceMatrix);
+	m_modelShaders->setUniformf("light.constant", 1.f);
+	m_modelShaders->setUniformf("light.linear", .014f);
+	m_modelShaders->setUniformf("light.quadratic", 0.0007f);
 
-	m_shadowMapShaders->setUniformVec3("light.position", glm::vec3(-2.0f, 4.0f, -1.0f));
-	m_shadowMapShaders->setUniformVec3("light.ambient", glm::vec3(.3f));
-	m_shadowMapShaders->setUniformVec3("light.diffuse", glm::vec3(1.f));
-	m_shadowMapShaders->setUniformVec3("light.specular", glm::vec3(.1f));
+	m_modelShaders->setUniformVec3("uLightPos", glm::vec3(0.f, 1.f, -1.f));
+	m_modelShaders->setUniformVec3("uViewPos", cam.getPosition());
 
-	m_shadowMapShaders->setUniformVec3("uViewPos", cam.getPosition());
+	m_modelShaders->setUniformf("material.shininess", 32.f);
 
-	m_shadowMapShaders->setUniformf("material.shininess", 64.f);
+	glm::mat4 model(glm::mat4(1.f));
+	model = glm::translate(model, modelPosition);
+	model = glm::rotate(model, static_cast<float>(glfwGetTime()), glm::normalize(glm::vec3(0.f, 1.f, 0.f)));
+	model = glm::scale(model, glm::vec3(0.2f));
 
-	renderScene(m_shadowMapShaders);
+	glm::mat3 normalMatrix{ glm::transpose(glm::inverse(model)) };
+
+	m_modelShaders->setUniformMat4("uModel", model);
+	m_modelShaders->setUniformMat3("uNormalMatrix", normalMatrix);
+
+	m_nanoSuit->Draw(m_modelShaders);
 }
 
 void Application::renderScene(std::shared_ptr<ShaderProgram> &shader)
