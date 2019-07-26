@@ -61,7 +61,7 @@ Renderer::Renderer(int winWidth, int winHeight, const char* title)
 		glDebugMessageCallback(glDebugCallback, NULL);
 	}
 
-	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_MULTISAMPLE);
 }
 
 Renderer::~Renderer()

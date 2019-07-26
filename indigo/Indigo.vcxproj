@@ -191,7 +191,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="demos\compute-basic\compute.cpp" />
+    <ClCompile Include="demos\template\demo.cpp" />
+    <ClCompile Include="demos\instancing\instancing.cpp" />
     <ClCompile Include="src\DepthMap.cpp" />
+    <ClCompile Include="src\GUI.cpp" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Primitive.cpp" />
     <ClCompile Include="src\Cubemap.cpp" />
     <ClCompile Include="extern\imgui\imgui\imgui.cpp" />
@@ -203,7 +208,7 @@
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\FrameBuffer.cpp" />
     <ClCompile Include="src\Light.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="demos\normals\normals.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
@@ -213,6 +218,10 @@
     <ClCompile Include="src\File.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="demos\compute-basic\compute.h" />
+    <ClInclude Include="demos\template\demo.h" />
+    <ClInclude Include="demos\instancing\instancing.h" />
+    <ClInclude Include="demos\normals\normals.h" />
     <ClInclude Include="extern\glew\include\GL\glew.h" />
     <ClInclude Include="extern\OpenGL\OpenGL\glext.h" />
     <ClInclude Include="include\Cubemap.h" />
@@ -245,6 +254,10 @@
     <ClInclude Include="src\ReadFile.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\shaders\basic.comp">
+      <SubType>
+      </SubType>
+    </None>
     <None Include="res\shaders\basic\depth-map.frag">
       <SubType>
       </SubType>
@@ -262,8 +275,7 @@
     <None Include="res\shaders\basic\shadow-map.vert" />
     <None Include="res\shaders\exploding.geom" />
     <None Include="res\shaders\instance.vert" />
-    <None Include="res\shaders\normals.frag" />
-    <None Include="res\shaders\normals.vert">
+    <None Include="res\shaders\model\basic.vert">
       <SubType>
       </SubType>
     </None>
@@ -315,8 +327,16 @@
     <None Include="res\shaders\material\basic.frag" />
     <None Include="res\shaders\material\maps.frag" />
     <None Include="res\shaders\material\maps.vert" />
-    <None Include="res\shaders\model\basic.frag" />
-    <None Include="res\shaders\model\basic.vert" />
+    <None Include="res\shaders\model\normals.frag" />
+    <None Include="res\shaders\model\normals.vert" />
+    <None Include="res\shaders\primitive\quad.frag">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="res\shaders\primitive\quad.vert">
+      <SubType>
+      </SubType>
+    </None>
     <None Include="res\shaders\yellow.frag">
       <SubType>
       </SubType>

@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "sandbox\Sandbox\Sandbox.vcxproj", "{3EC57040-8822-4B89-A7CD-5A408A9DE7FE}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D1D1A658-1A7E-435B-89B5-64EFA9C5FE2A} = {D1D1A658-1A7E-435B-89B5-64EFA9C5FE2A}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Indigo", "indigo\Indigo.vcxproj", "{D1D1A658-1A7E-435B-89B5-64EFA9C5FE2A}"
 EndProject
 Global
@@ -18,14 +13,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3EC57040-8822-4B89-A7CD-5A408A9DE7FE}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3EC57040-8822-4B89-A7CD-5A408A9DE7FE}.Debug|Win32.Build.0 = Debug|Win32
-		{3EC57040-8822-4B89-A7CD-5A408A9DE7FE}.Debug|x64.ActiveCfg = Debug|Win32
-		{3EC57040-8822-4B89-A7CD-5A408A9DE7FE}.Debug|x64.Build.0 = Debug|Win32
-		{3EC57040-8822-4B89-A7CD-5A408A9DE7FE}.Release|Win32.ActiveCfg = Release|Win32
-		{3EC57040-8822-4B89-A7CD-5A408A9DE7FE}.Release|Win32.Build.0 = Release|Win32
-		{3EC57040-8822-4B89-A7CD-5A408A9DE7FE}.Release|x64.ActiveCfg = Release|x64
-		{3EC57040-8822-4B89-A7CD-5A408A9DE7FE}.Release|x64.Build.0 = Release|x64
 		{D1D1A658-1A7E-435B-89B5-64EFA9C5FE2A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{D1D1A658-1A7E-435B-89B5-64EFA9C5FE2A}.Debug|Win32.Build.0 = Debug|Win32
 		{D1D1A658-1A7E-435B-89B5-64EFA9C5FE2A}.Debug|x64.ActiveCfg = Debug|Win32

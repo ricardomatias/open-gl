@@ -17,7 +17,7 @@ static const std::vector<std::string> faces
 };
 
 Cubemap::Cubemap()
-	: m_id(0), m_cube(std::make_shared<Primitive>(Primitive::CUBE)), m_shaderProgram(std::make_shared<ShaderProgram>())
+	: m_id(0), m_cube(std::make_shared<Primitive>(PrimitiveType::CUBE)), m_shaderProgram(std::make_shared<ShaderProgram>())
 {
 	std::unordered_map<ShaderTypes, std::string> shaders = {
 		{ShaderTypes::VERTEX, "res/shaders/environment/cubemap.vert"},

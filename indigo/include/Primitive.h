@@ -5,28 +5,36 @@
 #include "OpenGL.h"
 #include <vector>
 
+enum class PrimitiveType
+{
+	QUAD,
+	PLANE,
+	CUBE
+};
 
 class Primitive
 {
 	GLuint m_vao, m_vbo;
 	unsigned int m_vertices;
+	PrimitiveType m_type;
 
+	const std::vector<float> getPrimitiveData();
 public:
-	Primitive(const std::vector<float> &primitive, const glm::vec3 pos, const glm::vec3 rvec, float rangle, const glm::vec3 scl)
-		: m_vertices(primitive.size() / 8), position(pos), rotVec(rvec), rotAngle(rangle), scale(scl)
+	Primitive(PrimitiveType type, const glm::vec3 pos, const glm::vec3 rvec, float rangle, const glm::vec3 scl)
+		: m_vao(0), m_vbo(0), m_vertices(0), m_type(type), position(pos), rotVec(rvec), rotAngle(rangle), scale(scl)
 	{
-		create(primitive);
+		create();
 	}
 
-	Primitive(const std::vector<float> &primitive)
-		: m_vertices(primitive.size() / 8), position(glm::vec3(0.f)), rotVec(glm::vec3(0.f)), rotAngle(0.f), scale(glm::vec3(1.f))
+	Primitive(PrimitiveType type)
+		: m_vao(0), m_vbo(0), m_vertices(0), m_type(type), position(glm::vec3(0.f)), rotVec(glm::vec3(0.f)), rotAngle(0.f), scale(glm::vec3(1.f))
 	{
-		create(primitive);
+		create();
 	};
 
 	~Primitive();
 
-	void create(const std::vector<float>& primitive);
+	void create();
 
 	void bind();
 	void unbind();
@@ -38,6 +46,7 @@ public:
 	float rotAngle;
 	glm::vec3 scale;
 
+	static const std::vector<float> QUAD;
 	static const std::vector<float> PLANE;
 	static const std::vector<float> CUBE;
 };

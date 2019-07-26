@@ -30,7 +30,7 @@ public:
 	ShaderProgram()
 		: m_id(0) {};
 	~ShaderProgram() {
-		unbind();
+		destroy();
 
 		m_shaders.clear();
 
@@ -42,6 +42,8 @@ public:
 	void compileShaders(std::unordered_map<ShaderTypes, std::string>& shadersConf);
 
 	GLuint GetStatus(GLuint id, Status type, GLint statusType, const std::string& errorType, const std::string& errorMsg);
+
+	void destroy() const;
 
 	void bind() const;
 	void unbind() const;

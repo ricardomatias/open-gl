@@ -116,6 +116,13 @@ void ShaderProgram::bind() const
 
 void ShaderProgram::unbind() const
 {
+	GL(glUseProgram(0));
+}
+
+void ShaderProgram::destroy() const
+{
+	unbind();
+
 	GL(glDeleteProgram(m_id));
 }
 

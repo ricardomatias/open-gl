@@ -12,6 +12,7 @@ enum class ShaderTypes
 	TESS_EVAL,
 	GEOMETRY,
 	FRAGMENT,
+	COMPUTE,
 };
 
 class Shader
@@ -48,6 +49,10 @@ public:
 			case ShaderTypes::FRAGMENT:
 				m_glType = GL_FRAGMENT_SHADER;
 				m_name = "Fragment";
+				break;
+			case ShaderTypes::COMPUTE:
+				m_glType = GL_COMPUTE_SHADER;
+				m_name = "Compute";
 				break;
 			default:
 				break;

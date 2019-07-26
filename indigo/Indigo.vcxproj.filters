@@ -91,7 +91,22 @@
       <Filter>Source Files\src</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="demos\normals\normals.cpp">
       <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="demos\instancing\instancing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="demos\template\demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="demos\compute-basic\compute.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -185,11 +200,20 @@
     <ClInclude Include="extern\OpenGL\OpenGL\glext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="demos\normals\normals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="demos\instancing\instancing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="demos\template\demo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="demos\compute-basic\compute.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\model\basic.frag">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="res\shaders\basic\basic.frag">
       <Filter>Resource Files</Filter>
     </None>
@@ -206,9 +230,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\shaders\basic\basic.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\shaders\model\basic.vert">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\shaders\basic\border.frag">
@@ -292,9 +313,6 @@
     <None Include="res\shaders\normals.geom">
       <Filter>Source Files\shaders</Filter>
     </None>
-    <None Include="res\shaders\normals.vert">
-      <Filter>Source Files\shaders</Filter>
-    </None>
     <None Include="res\shaders\basic\quad.vert">
       <Filter>Source Files\shaders</Filter>
     </None>
@@ -313,7 +331,16 @@
     <None Include="res\shaders\yellow.frag">
       <Filter>Source Files\shaders</Filter>
     </None>
-    <None Include="res\shaders\normals.frag" />
+    <None Include="res\shaders\model\normals.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\shaders\model\normals.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\shaders\model\basic.vert" />
+    <None Include="res\shaders\primitive\quad.vert" />
+    <None Include="res\shaders\primitive\quad.frag" />
+    <None Include="res\shaders\basic.comp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="conanfile.txt">

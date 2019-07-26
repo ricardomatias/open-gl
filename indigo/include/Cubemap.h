@@ -6,6 +6,8 @@
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "Primitive.h"
+#include <glm/mat4x2.hpp>
+#include <glm/mat3x3.hpp>
 
 class Cubemap
 {
