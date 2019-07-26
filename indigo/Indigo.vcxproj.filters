@@ -28,6 +28,9 @@
     <Filter Include="Header Files\Indigo">
       <UniqueIdentifier>{77515ec8-b8f9-47d5-9411-94c52b2251a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders">
+      <UniqueIdentifier>{9bb115db-f90b-4253-8cae-5bf1afd11048}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="extern\imgui\imgui\imgui.cpp">
@@ -81,14 +84,14 @@
     <ClCompile Include="src\Texture.cpp">
       <Filter>Source Files\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Primitive.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\src</Filter>
     </ClCompile>
     <ClCompile Include="src\DepthMap.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -259,23 +262,58 @@
     <None Include="res\shaders\environment\cubemap.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\shaders\environment\reflection.frag" />
-    <None Include="res\shaders\environment\environment.vert" />
-    <None Include="res\shaders\environment\refraction.frag" />
-    <None Include="res\shaders\primitive\house.geom" />
-    <None Include="res\shaders\primitive\house.frag" />
-    <None Include="res\shaders\primitive\house.vert" />
-    <None Include="res\shaders\exploding.geom" />
-    <None Include="res\shaders\normals.geom" />
-    <None Include="res\shaders\yellow.frag" />
-    <None Include="res\shaders\normals.vert" />
-    <None Include="res\shaders\instance.vert" />
-    <None Include="res\shaders\basic\depth-map.vert" />
-    <None Include="res\shaders\basic\empty.frag" />
-    <None Include="res\shaders\basic\depth-map.frag" />
-    <None Include="res\shaders\basic\quad.vert" />
-    <None Include="res\shaders\basic\shadow-map.vert" />
-    <None Include="res\shaders\basic\shadow-map.frag" />
+    <None Include="res\shaders\basic\depth-map.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\basic\depth-map.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\basic\empty.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\environment\environment.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\exploding.geom">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\primitive\house.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\primitive\house.geom">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\primitive\house.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\instance.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\normals.geom">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\normals.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\basic\quad.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\environment\reflection.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\environment\refraction.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\basic\shadow-map.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\basic\shadow-map.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\yellow.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\normals.frag" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="conanfile.txt">

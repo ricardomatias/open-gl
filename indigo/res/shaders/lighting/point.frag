@@ -1,13 +1,12 @@
 #version 450
 
-in SHADER_BUS
-{
+in SHADER_BUS {
 	vec3 fragPos;
 	vec3 normal;
 	vec2 texCoord;
 	vec3 tangentLightDir;
 	vec3 tangentViewDir;
-	vec3 tangentViewPos;
+	vec3 tangentFragPos;
 } frag_in;
 
 out vec4 fragColor;
