@@ -7,6 +7,32 @@
 #include <unordered_map>
 
 
+void ShaderProgram::logActiveAttributes()
+{
+	GLint numAttribs;
+
+	GL(glGetProgramInterfaceiv(m_id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numAttribs));
+
+	GLenum properties[] = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION };
+
+	std::cout << "Active attributes" << std::endl;
+
+	for (int i = 0; i < numAttribs; ++i)
+	{
+		GLint results[3];
+		glGetProgramResourceiv(m_id, GL_PROGRAM_INPUT, i, 3, properties, 3, nullptr, results);
+
+		GLint nameBufSize = results[0] + 1;
+		char* name = new char[nameBufSize];
+
+		glGetProgramResourceName(m_id, GL_PROGRAM_INPUT, i, nameBufSize, nullptr, name);
+
+		printf("%-5d %s (%s)n", results[2], name, getTypeString(results[1]));
+
+		delete[] name;
+	}
+};
+
 GLuint ShaderProgram::GetStatus(GLuint id, Status type, GLint statusType, const std::string& errorType,
                                 const std::string& errorMsg)
 {
@@ -187,4 +213,43 @@ void ShaderProgram::setUniformVec3(const std::string& name, float x, float y, fl
 	GL((location = glGetUniformLocation(m_id, name.c_str())));
 
 	GL(glUniform3f(location, x, y, z));
+}
+
+void ShaderProgram::setUniformVec4(const std::string& name, const glm::vec4& vector) const
+{
+	GLint location;
+
+	GL((location = glGetUniformLocation(m_id, name.c_str())));
+
+	GL(glUniform4fv(location, 1, glm::value_ptr(vector)));
+}
+
+const char* ShaderProgram::getTypeString(GLenum type) {
+	switch (type)
+	{
+		case GL_FLOAT:
+			return "float";
+		case GL_FLOAT_VEC2:
+			return "vec2";
+		case GL_FLOAT_VEC3:
+			return "vec3";
+		case GL_FLOAT_VEC4:
+			return "vec4";
+		case GL_DOUBLE:
+			return "double";
+		case GL_INT:
+			return "int";
+		case GL_UNSIGNED_INT:
+			return "unsigned int";
+		case GL_BOOL:
+			return "bool";
+		case GL_FLOAT_MAT2:
+			return "mat2";
+		case GL_FLOAT_MAT3:
+			return "mat3";
+		case GL_FLOAT_MAT4:
+			return "mat4";
+		default:
+			return "?";
+	}
 }

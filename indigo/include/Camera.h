@@ -8,7 +8,7 @@
 static const float YAW = -90.0f;
 static const float PITCH = 0.0f;
 static const float SPEED = 2.5f;
-static const glm::vec3 WORLD_UP(0, 1, 0);
+static constexpr glm::vec3 WORLD_UP = glm::vec3{ 0.f, 1.f, 0.f };
 
 
 enum struct CameraDirection

@@ -4,11 +4,11 @@
  * * BasicComputeDemo
  */
 
-#include "../demos/compute-basic/compute.h"
+#include "../demos/compute-particles-simple/compute-particles-simple.h"
 
 int main()
 {
-	BasicComputeDemo::Application app{ BasicComputeDemo::SCR_WIDTH, BasicComputeDemo::SCR_HEIGHT, "Compute Shaderz" };
+	ComputeParticlesSimple::Application app{ ComputeParticlesSimple::SCR_WIDTH, ComputeParticlesSimple::SCR_HEIGHT, "Compute Particles (Simple)" };
 
 	app.run();
 

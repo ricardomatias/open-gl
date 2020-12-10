@@ -8,10 +8,12 @@ Camera::Camera(const glm::vec3& pos, const glm::vec3& target, const float speed 
 {
 	m_up = WORLD_UP;
 
+	std::cout << WORLD_UP.y << std::endl;
+
 	m_front = glm::vec3(0.f, 0.f, -1.f);
 
 	m_direction = glm::normalize(m_position - m_target);
-	m_right = WORLD_UP;
+	m_right = glm::normalize(glm::cross(m_direction, m_up));
 
 	m_speed = speed;
 

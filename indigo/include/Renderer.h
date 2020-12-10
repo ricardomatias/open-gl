@@ -16,6 +16,7 @@ public:
 	void run();
 
 	virtual void setup() = 0;
+	virtual void update(double t);
 	virtual void draw() = 0;
 
 	int m_windowWidth;

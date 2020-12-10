@@ -7,7 +7,7 @@
 Renderer::Renderer(int winWidth, int winHeight, const char* title)
 	: m_windowWidth(winWidth), m_windowHeight(winHeight), m_window(nullptr), m_title(title)
 {
-	glslVersion = "#version 450";
+	glslVersion = "#version 430";
 
 	glfwSetErrorCallback(glfwErrorCallback);
 
@@ -16,12 +16,12 @@ Renderer::Renderer(int winWidth, int winHeight, const char* title)
 		return; // -1 | throw exception
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
-	glfwWindowHint(GLFW_SAMPLES, 4); // ANTI-ALIASING
+	//glfwWindowHint(GLFW_SAMPLES, 4); // ANTI-ALIASING
 
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
@@ -54,7 +54,7 @@ Renderer::Renderer(int winWidth, int winHeight, const char* title)
 	/* OPEN-GL DEFAULTS */
 
 	// Set debug callback
-	glEnable(GL_DEBUG_OUTPUT);
+	//glEnable(GL_DEBUG_OUTPUT);
 
 	if (glDebugMessageCallback != NULL)
 	{
@@ -73,6 +73,7 @@ Renderer::~Renderer()
 }
 
 void Renderer::setup() {};
+void Renderer::update(double t) {};
 void Renderer::draw() {};
 
 void Renderer::run()
@@ -83,14 +84,16 @@ void Renderer::run()
 	int fps = 0;
 	double lastTime = 0.0;
 	double frameTime = 0.0;
-
+	double currentFrame = 0.0;
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(m_window))
 	{
-		draw();
+		currentFrame = glfwGetTime();
 
-		const double currentFrame = glfwGetTime();
+		update(currentFrame - lastTime);
+
+		draw();
 
 		// Measure speed
 		frames++;

@@ -35,12 +35,13 @@ public:
 		m_shaders.clear();
 
 		std::cout << "[ShaderProgram] destroyed" << std::endl;
-	};
+	}
 
 	unsigned int ID() const { return m_id; };
 
 	void compileShaders(std::unordered_map<ShaderTypes, std::string>& shadersConf);
 
+	void logActiveAttributes();
 	GLuint GetStatus(GLuint id, Status type, GLint statusType, const std::string& errorType, const std::string& errorMsg);
 
 	void destroy() const;
@@ -56,7 +57,10 @@ public:
 
 	void setUniformVec3(const std::string& name, const glm::vec3& vector) const;
 	void setUniformVec3(const std::string& name, float x, float y, float z) const;
-
 	void setUniformArrayVec3(const std::string& name, const std::vector<glm::vec3> vectors) const;
+
+	void setUniformVec4(const std::string& name, const glm::vec4& vector) const;
+
+	const char* getTypeString(GLenum type);
 };
 

@@ -192,6 +192,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="demos\compute-basic\compute.cpp" />
+    <ClCompile Include="demos\compute-particles-simple\compute-particles-simple.cpp" />
     <ClCompile Include="demos\template\demo.cpp" />
     <ClCompile Include="demos\instancing\instancing.cpp" />
     <ClCompile Include="src\DepthMap.cpp" />
@@ -219,6 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos\compute-basic\compute.h" />
+    <ClInclude Include="demos\compute-particles-simple\compute-particles-simple.h" />
     <ClInclude Include="demos\template\demo.h" />
     <ClInclude Include="demos\instancing\instancing.h" />
     <ClInclude Include="demos\normals\normals.h" />
@@ -254,6 +256,15 @@
     <ClInclude Include="src\ReadFile.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="demos\compute-particles-simple\shaders\particle.comp" />
+    <None Include="demos\compute-particles-simple\shaders\particle.frag">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="demos\compute-particles-simple\shaders\particle.vert">
+      <SubType>
+      </SubType>
+    </None>
     <None Include="res\shaders\basic.comp">
       <SubType>
       </SubType>

@@ -108,6 +108,9 @@
     <ClCompile Include="demos\compute-basic\compute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="demos\compute-particles-simple\compute-particles-simple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ReadFile.h">
@@ -210,6 +213,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="demos\compute-basic\compute.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="demos\compute-particles-simple\compute-particles-simple.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -341,6 +347,9 @@
     <None Include="res\shaders\primitive\quad.vert" />
     <None Include="res\shaders\primitive\quad.frag" />
     <None Include="res\shaders\basic.comp" />
+    <None Include="demos\compute-particles-simple\shaders\particle.vert" />
+    <None Include="demos\compute-particles-simple\shaders\particle.frag" />
+    <None Include="demos\compute-particles-simple\shaders\particle.comp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="conanfile.txt">
